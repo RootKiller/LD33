@@ -22,6 +22,12 @@ public class LD33 extends ApplicationAdapter {
 	private CommandManager commandManager;
 	private BindPool bindPool;
 
+	public static LD33 Instance = null;
+
+	public LD33() {
+		Instance = this;
+	}
+
 	@Override
 	public void create () {
 		bindPool = new BindPool();
