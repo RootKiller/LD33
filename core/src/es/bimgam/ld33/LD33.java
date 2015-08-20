@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import es.bimgam.ld33.input.Bind;
+import es.bimgam.ld33.input.BindPool;
+
+import es.bimgam.ld33.core.CommandManager;
 
 public class LD33 extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -16,25 +19,31 @@ public class LD33 extends ApplicationAdapter {
 
 	Graphics graphics;
 
-	private Bind exitGameBind = new Bind(Input.Keys.ESCAPE, true);
+	private CommandManager commandManager;
+	private BindPool bindPool;
 
 	@Override
 	public void create () {
+		bindPool = new BindPool();
+		commandManager = new CommandManager();
 		batch = new SpriteBatch();
 		img = new Texture("interface/horny_peppers_logo.png");
 		graphics = Gdx.graphics;
+
+		commandManager.register(new QuitCommand());
+
+		bindPool.register(new Bind(Input.Keys.ESCAPE, true, "quit"));
 	}
 
 	@Override
 	public void render () {
+		// TODO: Find better place to handle all the non-graphical stuffs
+		bindPool.tick();
+
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		batch.draw(img, 0, 0, graphics.getWidth(), graphics.getHeight());
 		batch.end();
-
-		if (exitGameBind.isActive()) {
-			Gdx.app.exit();
-		}
 	}
 }
