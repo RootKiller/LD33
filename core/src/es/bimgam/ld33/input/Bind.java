@@ -3,9 +3,6 @@ package es.bimgam.ld33.input;
 import com.badlogic.gdx.Gdx;
 import es.bimgam.ld33.core.CommandManager;
 
-/**
- * Created by Eryk on 20.08.2015.
- */
 public class Bind {
 	private int key;
 	private boolean down;

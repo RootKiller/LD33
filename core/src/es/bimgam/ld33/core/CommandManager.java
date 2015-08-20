@@ -2,9 +2,6 @@ package es.bimgam.ld33.core;
 
 import java.util.HashMap;
 
-/**
- * Created by Eryk on 20.08.2015.
- */
 public class CommandManager {
 	private HashMap<String, Command> commands = new HashMap<String, Command>();
 

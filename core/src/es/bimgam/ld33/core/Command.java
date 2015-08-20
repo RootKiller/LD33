@@ -1,8 +1,5 @@
 package es.bimgam.ld33.core;
 
-/**
- * Created by Eryk on 20.08.2015.
- */
 public abstract class Command {
 	private String name;
 
