@@ -14,6 +14,9 @@ import es.bimgam.ld33.input.BindPool;
 
 import es.bimgam.ld33.core.CommandManager;
 
+import es.bimgam.ld33.graphics.Font;
+
+
 public class LD33 extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private Texture img;
@@ -22,6 +25,8 @@ public class LD33 extends ApplicationAdapter {
 
 	private CommandManager commandManager;
 	private BindPool bindPool;
+	private Font font1;
+	private Font font2;
 
 	private AssetManager assetsManager;
 
@@ -39,6 +44,8 @@ public class LD33 extends ApplicationAdapter {
 		assetsManager = new AssetManager();
 		assetsManager.load("interface/horny_peppers_logo.png", Texture.class);
 		graphics = Gdx.graphics;
+		font1 = new Font("fonts/segoepr.ttf", 20);
+		font2 = new Font("fonts/arial.ttf", 25);
 
 		commandManager.register(new QuitCommand());
 
@@ -58,6 +65,8 @@ public class LD33 extends ApplicationAdapter {
 		if (img != null) {
 			batch.begin();
 			batch.draw(img, 0, 0, graphics.getWidth(), graphics.getHeight());
+			font1.draw(batch, "Test żaźbćcłdóeśfągń", 20, 20);
+			font2.draw(batch, "Kolejny testowy tekst", 350, 20);
 			batch.end();
 		}
 	}
@@ -66,6 +75,8 @@ public class LD33 extends ApplicationAdapter {
 	public void dispose () {
 		batch.dispose();
 		assetsManager.dispose();
+		font1.dispose();
+		font2.dispose();
 	}
 
 	public AssetManager getAssetsManager() {
