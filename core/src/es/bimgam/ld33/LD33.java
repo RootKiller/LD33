@@ -9,12 +9,22 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import es.bimgam.ld33.input.Bind;
 import es.bimgam.ld33.input.BindPool;
 
 import es.bimgam.ld33.core.CommandManager;
 
 import es.bimgam.ld33.graphics.Font;
+
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+
 
 
 public class LD33 extends ApplicationAdapter {
@@ -29,6 +39,9 @@ public class LD33 extends ApplicationAdapter {
 	private Font font2;
 
 	private AssetManager assetsManager;
+
+	public Stage stage;
+	public Skin skin;
 
 	public static LD33 Instance = null;
 
@@ -50,6 +63,39 @@ public class LD33 extends ApplicationAdapter {
 		commandManager.register(new QuitCommand());
 
 		bindPool.register(new Bind(Input.Keys.ESCAPE, true, "quit"));
+
+		stage = new Stage();
+
+		skin = new Skin();
+		skin.addRegions(new TextureAtlas(Gdx.files.internal("UI/uiskin.atlas")));
+		skin.add("default-font", font2.getBitmapFont());
+		skin.load(Gdx.files.internal("UI/uiskin.json"));
+		final TextButton button = new TextButton("Start", skin, "default");
+
+		button.setWidth(200f);
+		button.setHeight(20f);
+		button.setPosition(Gdx.graphics.getWidth() / 2 - 100f, Gdx.graphics.getHeight() / 2 - 10f);
+
+		button.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				button.setText("Wciśnięty button");
+			}
+		});
+
+		Label label = new Label("testowy text", skin);
+
+		label.setPosition(Gdx.graphics.getWidth() / 2 - 100f, Gdx.graphics.getHeight() / 2 - 40f);
+
+		ProgressBar pb = new ProgressBar(5f, 100f, 70f, false, skin);
+
+		pb.setPosition(Gdx.graphics.getWidth() / 2 - 100f, Gdx.graphics.getHeight() / 2 - 80f);
+
+		stage.addActor(button);
+		stage.addActor(label);
+		stage.addActor(pb);
+
+		Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
@@ -69,6 +115,9 @@ public class LD33 extends ApplicationAdapter {
 			font2.draw(batch, "Kolejny testowy tekst", 350, 20);
 			batch.end();
 		}
+
+		stage.act(Gdx.graphics.getDeltaTime());
+		stage.draw();
 	}
 
 	@Override
@@ -77,6 +126,7 @@ public class LD33 extends ApplicationAdapter {
 		assetsManager.dispose();
 		font1.dispose();
 		font2.dispose();
+		stage.dispose();
 	}
 
 	public AssetManager getAssetsManager() {

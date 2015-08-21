@@ -59,6 +59,10 @@ public class Font {
         glyphLayout.setText(font, str, Color.WHITE, targetWidth, halign, wrap);
         return glyphLayout.height;
     }
+
+    public BitmapFont getBitmapFont() {
+        return font;
+    }
     
     public void dispose() {
         font.dispose();
