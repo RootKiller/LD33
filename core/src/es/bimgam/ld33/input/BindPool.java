@@ -8,6 +8,10 @@ public class BindPool {
 	public BindPool() {
 	}
 
+	public void release() {
+		this.binds.clear();
+	}
+
 	public void register(Bind bind) {
 		this.binds.add(bind);
 	}

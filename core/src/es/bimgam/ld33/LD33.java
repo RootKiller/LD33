@@ -64,6 +64,8 @@ public class LD33 extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		this.stateManager.release();
+		this.bindPool.release();
+
 		this.assetsManager.dispose();
 	}
 
