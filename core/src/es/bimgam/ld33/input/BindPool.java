@@ -12,6 +12,10 @@ public class BindPool {
 		this.binds.add(bind);
 	}
 
+	public void unregister(Bind bind) {
+		this.binds.remove(bind);
+	}
+
 	public void tick() {
 		for (Bind bind : this.binds) {
 			bind.tick();
