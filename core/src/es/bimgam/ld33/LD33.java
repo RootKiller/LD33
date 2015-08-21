@@ -14,21 +14,18 @@ import es.bimgam.ld33.input.BindPool;
 
 import es.bimgam.ld33.core.CommandManager;
 
-import es.bimgam.ld33.graphics.Font;
+import es.bimgam.ld33.states.MenuState;
+
+import es.bimgam.ld33.states.StateManager;
 
 
 public class LD33 extends ApplicationAdapter {
-	private SpriteBatch batch;
-	private Texture img;
-
-	private Graphics graphics;
-
 	private CommandManager commandManager;
 	private BindPool bindPool;
-	private Font font1;
-	private Font font2;
 
 	private AssetManager assetsManager;
+
+	private StateManager stateManager;
 
 	public static LD33 Instance = null;
 
@@ -40,12 +37,11 @@ public class LD33 extends ApplicationAdapter {
 	public void create () {
 		bindPool = new BindPool();
 		commandManager = new CommandManager();
-		batch = new SpriteBatch();
 		assetsManager = new AssetManager();
-		assetsManager.load("interface/horny_peppers_logo.png", Texture.class);
-		graphics = Gdx.graphics;
-		font1 = new Font("fonts/segoepr.ttf", 20);
-		font2 = new Font("fonts/arial.ttf", 25);
+		stateManager = new StateManager();
+		registerStates();
+
+		stateManager.setActiveState("MenuState");
 
 		commandManager.register(new QuitCommand());
 
@@ -54,32 +50,28 @@ public class LD33 extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		if (assetsManager.update()) {
-			img = assetsManager.get("interface/horny_peppers_logo.png");
-		}
+		assetsManager.update();
+
+		stateManager.tick(Gdx.graphics.getDeltaTime());
 		bindPool.tick();
 
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		if (img != null) {
-			batch.begin();
-			batch.draw(img, 0, 0, graphics.getWidth(), graphics.getHeight());
-			font1.draw(batch, "Test żaźbćcłdóeśfągń", 20, 20);
-			font2.draw(batch, "Kolejny testowy tekst", 350, 20);
-			batch.end();
-		}
+		stateManager.render();
 	}
 
 	@Override
 	public void dispose () {
-		batch.dispose();
+		stateManager.release();
 		assetsManager.dispose();
-		font1.dispose();
-		font2.dispose();
 	}
 
 	public AssetManager getAssetsManager() {
 		return assetsManager;
+	}
+
+	private void registerStates() {
+		stateManager.register(new MenuState());
 	}
 }
