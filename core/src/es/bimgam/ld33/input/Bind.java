@@ -6,34 +6,43 @@ import es.bimgam.ld33.core.CommandManager;
 public class Bind {
 	private int key;
 	private boolean down;
-	private boolean hasCommand;
 	private String command;
+	private Runnable runnable;
+	private boolean isActive;
 
 	public Bind(int key, boolean down) {
 		this.key = key;
 		this.down = down;
-		this.hasCommand = false;
 	}
 
 	public Bind(int key, boolean down, String command) {
 		this.key = key;
 		this.down = down;
-		this.hasCommand = true;
 		this.command = command;
 	}
 
-	public void tick() {
-		if (! this.hasCommand) {
-			return;
-		}
+	public Bind(int key, boolean down, Runnable runnable) {
+		this.key = key;
+		this.down = down;
+		this.runnable = runnable;
+	}
 
-		if (isActive()) {
-			CommandManager.Instance.execute(this.command);
+	public void tick() {
+		boolean isPressed = Gdx.input.isKeyJustPressed(this.key);
+		isActive = this.down ? isPressed : !isPressed;
+
+		if (isActive) {
+			if (this.command.length() > 0) {
+				CommandManager.Instance.execute(this.command);
+			}
+
+			if (this.runnable != null) {
+				this.runnable.run();
+			}
 		}
 	}
 
 	public boolean isActive() {
-		boolean isPressed = Gdx.input.isKeyPressed(this.key);
-		return this.down ? isPressed : !isPressed;
+		return isActive;
 	}
 }
