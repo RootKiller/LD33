@@ -9,8 +9,7 @@ public class QuitCommand extends Command {
 	}
 
 	@Override
-	public boolean run() {
+	public void run() {
 		Gdx.app.exit();
-		return true;
 	}
 }

@@ -12,13 +12,14 @@ public class CommandManager {
 	}
 
 	public void register(Command cmd) {
-		commands.put(cmd.getName(), cmd);
+		this.commands.put(cmd.getName(), cmd);
 	}
 
 	public boolean execute(String commandName) {
-		Command cmd = commands.get(commandName);
+		Command cmd = this.commands.get(commandName);
 		if (cmd != null) {
-			return cmd.run();
+			cmd.run();
+			return true;
 		}
 		return false;
 	}
