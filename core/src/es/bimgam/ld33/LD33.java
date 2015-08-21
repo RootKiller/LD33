@@ -35,43 +35,43 @@ public class LD33 extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-		bindPool = new BindPool();
-		commandManager = new CommandManager();
-		assetsManager = new AssetManager();
-		stateManager = new StateManager();
+		this.bindPool = new BindPool();
+		this.commandManager = new CommandManager();
+		this.assetsManager = new AssetManager();
+		this.stateManager = new StateManager();
 		registerStates();
 
-		stateManager.setActiveState("MenuState");
+		this.stateManager.setActiveState("MenuState");
 
-		commandManager.register(new QuitCommand());
+		this.commandManager.register(new QuitCommand());
 
-		bindPool.register(new Bind(Input.Keys.ESCAPE, true, "quit"));
+		this.bindPool.register(new Bind(Input.Keys.ESCAPE, true, "quit"));
 	}
 
 	@Override
 	public void render () {
-		assetsManager.update();
+		this.assetsManager.update();
 
-		stateManager.tick(Gdx.graphics.getDeltaTime());
-		bindPool.tick();
+		this.stateManager.tick(Gdx.graphics.getDeltaTime());
+		this.bindPool.tick();
 
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		stateManager.render();
+		this.stateManager.render();
 	}
 
 	@Override
 	public void dispose () {
-		stateManager.release();
-		assetsManager.dispose();
+		this.stateManager.release();
+		this.assetsManager.dispose();
 	}
 
 	public AssetManager getAssetsManager() {
-		return assetsManager;
+		return this.assetsManager;
 	}
 
 	private void registerStates() {
-		stateManager.register(new MenuState());
+		this.stateManager.register(new MenuState());
 	}
 }

@@ -25,47 +25,47 @@ public class MenuState extends State {
 	public MenuState() {
 		super("MenuState");
 
-		assetsManager = LD33.Instance.getAssetsManager();
+		this.assetsManager = LD33.Instance.getAssetsManager();
 	}
 
 	@Override
 	public void activate() {
-		assetsManager.load(HORNY_PEPPERS_LOGO, Texture.class);
-		graphics = Gdx.graphics;
-		font1 = new Font("fonts/segoepr.ttf", 20);
-		font2 = new Font("fonts/arial.ttf", 25);
+		this.assetsManager.load(HORNY_PEPPERS_LOGO, Texture.class);
+		this.graphics = Gdx.graphics;
+		this.font1 = new Font("fonts/segoepr.ttf", 20);
+		this.font2 = new Font("fonts/arial.ttf", 25);
 
-		batch = new SpriteBatch();
+		this.batch = new SpriteBatch();
 	}
 
 	@Override
 	public void deactivate() {
-		font1.dispose();
-		font1 = null;
+		this.font1.dispose();
+		this.font1 = null;
 
-		font2.dispose();
-		font2 = null;
+		this.font2.dispose();
+		this.font2 = null;
 
-		assetsManager.unload(HORNY_PEPPERS_LOGO);
-		logo = null;
+		this.assetsManager.unload(HORNY_PEPPERS_LOGO);
+		this.logo = null;
 
-		batch.dispose();
-		batch = null;
+		this.batch.dispose();
+		this.batch = null;
 	}
 
 	@Override
 	public void render() {
-		if (logo == null && assetsManager.isLoaded(HORNY_PEPPERS_LOGO)) {
-			logo = assetsManager.get(HORNY_PEPPERS_LOGO);
+		if (this.logo == null && this.assetsManager.isLoaded(HORNY_PEPPERS_LOGO)) {
+			this.logo = this.assetsManager.get(HORNY_PEPPERS_LOGO);
 		}
 
-		batch.begin();
-		if (logo != null) {
-			batch.draw(logo, 0, 0, graphics.getWidth(), graphics.getHeight());
+		this.batch.begin();
+		if (this.logo != null) {
+			this.batch.draw(logo, 0, 0, this.graphics.getWidth(), this.graphics.getHeight());
 		}
 
-		font1.draw(batch, "Hello world", 0, 0);
-		font2.draw(batch, "Hello font 2!", 0, font1.getRenderHeight("Hello world") + 2.0f);
-		batch.end();
+		this.font1.draw(this.batch, "Hello world", 0, 0);
+		this.font2.draw(this.batch, "Hello font 2!", 0, this.font1.getRenderHeight("Hello world") + 2.0f);
+		this.batch.end();
 	}
 }

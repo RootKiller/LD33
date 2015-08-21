@@ -43,6 +43,6 @@ public class Bind {
 	}
 
 	public boolean isActive() {
-		return isActive;
+		return this.isActive;
 	}
 }

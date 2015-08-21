@@ -9,11 +9,11 @@ public class BindPool {
 	}
 
 	public void register(Bind bind) {
-		binds.add(bind);
+		this.binds.add(bind);
 	}
 
 	public void tick() {
-		for (Bind bind : binds) {
+		for (Bind bind : this.binds) {
 			bind.tick();
 		}
 	}

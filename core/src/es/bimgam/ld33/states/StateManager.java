@@ -16,44 +16,44 @@ public class StateManager {
 	}
 
 	public void release() {
-		if (activeState != null) {
-			activeState.deactivate();
-			activeState = null;
+		if (this.activeState != null) {
+			this.activeState.deactivate();
+			this.activeState = null;
 		}
-		states.clear();
+		this.states.clear();
 
 		Instance = null;
 	}
 
 	public void register(State state) {
 		state.manager = this;
-		states.put(state.getName(), state);
+		this.states.put(state.getName(), state);
 	}
 
 	public boolean setActiveState(String stateName) {
-		if (! states.containsKey(stateName)) {
+		if (! this.states.containsKey(stateName)) {
 			return false;
 		}
 
-		if (activeState != null) {
-			activeState.deactivate();
+		if (this.activeState != null) {
+			this.activeState.deactivate();
 		}
-		activeState = states.get(stateName);
-		if (activeState != null) {
-			activeState.activate();
+		this.activeState = this.states.get(stateName);
+		if (this.activeState != null) {
+			this.activeState.activate();
 		}
 		return true;
 	}
 
 	public void tick(float deltaTime) {
-		if (activeState != null) {
-			activeState.tick(deltaTime);
+		if (this.activeState != null) {
+			this.activeState.tick(deltaTime);
 		}
 	}
 
 	public void render() {
-		if (activeState != null) {
-			activeState.render();
+		if (this.activeState != null) {
+			this.activeState.render();
 		}
 	}
 }
