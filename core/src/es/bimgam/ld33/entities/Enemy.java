@@ -84,12 +84,12 @@ public class Enemy extends GameEntity {
 		timeToChangeTask -= deltaTime;
 
 		if (timeToChangeTask <= 0.0f) {
-			Vector2 playerPos = this.player.getPosition().nor();
-			Vector2 myPos = getPosition().nor();
+			// Vector2 playerPos = this.player.getPosition().nor();
+			// Vector2 myPos = getPosition().nor();
 
-			float dot = playerPos.dot(myPos);
+			// float dot = playerPos.dot(myPos);
 
-			final float MOVEMENT_SPEED = 100.0f;
+			final float MOVEMENT_SPEED = 15.0f;
 			this.physicalBody.setLinearVelocity(new Vector2((float)Math.random() * MOVEMENT_SPEED, (float)Math.random() * MOVEMENT_SPEED));
 
 			timeToChangeTask = (float) Math.random() * 10.0f;
@@ -171,7 +171,7 @@ public class Enemy extends GameEntity {
 			shapeRenderer.setColor(Color.BLACK);
 			shapeRenderer.rect(screen.x, screen.y, 100, 10);
 			shapeRenderer.setColor(Color.BLUE);
-			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * ((float)this.freezeCooldown / FreezingBullet.FREEZEE_COOLDOWN), 6);
+			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * (this.freezeCooldown / FreezingBullet.FREEZEE_COOLDOWN), 6);
 		}
 	}
 
