@@ -26,7 +26,7 @@ public class Player extends GameEntity {
 
 	static private final float SHOOTING_COOLDOWN = 0.8f;
 
-	static private final float SHOOTING_BONUS_FOR_KILLS = 0.01f;
+	static private final float SHOOTING_BONUS_FOR_KILLS = 0.00001f;
 
 	private AssetManager assetManager;
 	private World physicalWorld;
