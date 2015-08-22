@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+
 import es.bimgam.ld33.graphics.Font;
 
 import java.lang.reflect.Field;
@@ -49,16 +50,26 @@ public class Player extends GameEntity {
 
 	private float shootCooldown;
 
+	private int xp;
+	private int level;
+
+	private float levelUpLabel;
+
 	public Player(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
 
 		this.wasFireButtonPressed = false;
 
-		bulletTypes.add(Bullet.class);
-		bulletTypes.add(FreezingBullet.class);
+		this.bulletTypes.add(Bullet.class);
+		this.bulletTypes.add(FreezingBullet.class);
 
-		shootCooldown = 0.0f;
+		this.shootCooldown = 0.0f;
 		this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sound/shoot.ogg"));
+
+		this.xp = 0;
+		this.level = 1;
+
+		this.levelUpLabel = 0.0f;
 	}
 
 	@Override
@@ -157,7 +168,8 @@ public class Player extends GameEntity {
 			velocity.interpolate(Vector2.Zero, alpha, Interpolation.sine);
 		}
 
-		shootCooldown -= deltaTime;
+		this.shootCooldown -= deltaTime;
+		this.levelUpLabel -= deltaTime;
 	}
 
 	@Override
@@ -186,18 +198,37 @@ public class Player extends GameEntity {
 
 	@Override
 	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
+		if (this.levelUpLabel > 0.0f) {
+			final float width = hudFont.getRenderWidth("Level "+this.level+"!");
+			hudFont.draw(batch, "Level "+this.level+"!", Gdx.graphics.getWidth() / 2 - width / 2, Gdx.graphics.getHeight() / 2 - 100.0f, Color.YELLOW);
+		}
+
 		Field weaponNameField = null;
 		try {
 			weaponNameField = this.bulletTypes.get(this.currentBulletType).getField("WEAPON_NAME");
 			hudFont.draw(batch, "Current weapon: " + weaponNameField.get(null), 10, 10, Color.BLACK);
 		} catch(Exception e) {
 		}
+		hudFont.draw(batch, "XP: " + xp + " Level: " + level, 10, 50, Color.BLACK);
 
 		if (shootCooldown > 0.0f) {
 			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 50, 100, 20);
+			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 90, 100, 20);
 			shapeRenderer.setColor(Color.WHITE);
-			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 50, 100 * (shootCooldown / SHOOTING_COOLDOWN), 20);
+			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 90, 100 * (shootCooldown / SHOOTING_COOLDOWN), 20);
+		}
+	}
+
+	public int getLevelFromXP(int xp) {
+		return 1 + (int) Math.sqrt(xp / 5);
+	}
+
+	public void addXP(int xp) {
+		this.xp += xp;
+		int lvl = getLevelFromXP(this.xp);
+		if (lvl != this.level) {
+			this.levelUpLabel = 3.0f;
+			this.level = lvl;
 		}
 	}
 
