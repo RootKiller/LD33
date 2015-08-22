@@ -3,11 +3,14 @@ package es.bimgam.ld33.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import es.bimgam.ld33.LD33;
 import es.bimgam.ld33.graphics.Font;
 
@@ -47,6 +50,12 @@ public class MenuState extends State {
 		newGame.setSize(300, 50);
 		newGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 + 10.0f);
 		this.stage.addActor(newGame);
+
+		newGame.addListener(new ClickListener() {
+			public void clicked (InputEvent event, float x, float y) {
+				StateManager.Instance.setActiveState("InGameState");
+			}
+		});
 	}
 
 	@Override
@@ -65,6 +74,9 @@ public class MenuState extends State {
 
 	@Override
 	public void render() {
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 		if (this.logo == null && this.assetsManager.isLoaded(HORNY_PEPPERS_LOGO)) {
 			this.logo = this.assetsManager.get(HORNY_PEPPERS_LOGO);
 		}
@@ -80,5 +92,9 @@ public class MenuState extends State {
 
 		this.font1.draw(this.batch, "FPS: " + this.graphics.getFramesPerSecond(), 2, 2);
 		this.batch.end();
+	}
+
+	@Override
+	public void resize(int width, int height) {
 	}
 }
