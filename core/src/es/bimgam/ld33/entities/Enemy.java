@@ -60,7 +60,7 @@ public class Enemy extends GameEntity {
 
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;
-		def.position.set(-250.0f + (float)Math.random() * 500.0f, -250.0f + (float)Math.random() * 500.0f);
+		def.position.set(-1000.0f + (float)Math.random() * 2000.0f, -1000.0f + (float)Math.random() * 2000.0f);
 		def.fixedRotation = true;
 
 		this.physicalBody = this.physicalWorld.createBody(def);
