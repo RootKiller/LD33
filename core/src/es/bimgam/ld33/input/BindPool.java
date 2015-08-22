@@ -5,7 +5,10 @@ import java.util.ArrayList;
 public class BindPool {
 	private ArrayList<Bind> binds = new ArrayList<Bind>();
 
+	public static BindPool Instance = null;
+
 	public BindPool() {
+		Instance = this;
 	}
 
 	public void release() {

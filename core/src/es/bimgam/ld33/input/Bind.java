@@ -13,18 +13,28 @@ public class Bind {
 	public Bind(int key, boolean down) {
 		this.key = key;
 		this.down = down;
+
+		register();
 	}
 
 	public Bind(int key, boolean down, String command) {
 		this.key = key;
 		this.down = down;
 		this.command = command;
+
+		register();
 	}
 
 	public Bind(int key, boolean down, Runnable runnable) {
 		this.key = key;
 		this.down = down;
 		this.runnable = runnable;
+
+		register();
+	}
+
+	private void register() {
+		BindPool.Instance.register(this);
 	}
 
 	public void tick() {
