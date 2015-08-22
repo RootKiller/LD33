@@ -24,6 +24,10 @@ public class Player extends GameEntity {
 
 	static private final String SPRITE_FILE = "entities/sprites/PLAYER/character.png";
 
+	static private final float SHOOTING_COOLDOWN = 0.3f;
+
+	static private final float SHOOTING_BONUS_FOR_KILLS = 0.01f;
+
 	private AssetManager assetManager;
 	private World physicalWorld;
 	private CircleShape circleShape;
@@ -43,6 +47,8 @@ public class Player extends GameEntity {
 	private ArrayList<Class<? extends Bullet>> bulletTypes = new ArrayList<Class<? extends Bullet>>();
 	private int currentBulletType = 0;
 
+	private float shootCooldown;
+
 	public Player(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
 
@@ -51,6 +57,7 @@ public class Player extends GameEntity {
 		bulletTypes.add(Bullet.class);
 		bulletTypes.add(FreezingBullet.class);
 
+		shootCooldown = 0.0f;
 		this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sound/shoot.ogg"));
 	}
 
@@ -149,6 +156,8 @@ public class Player extends GameEntity {
 			velocity.lerp(Vector2.Zero, alpha);
 			velocity.interpolate(Vector2.Zero, alpha, Interpolation.sine);
 		}
+
+		shootCooldown -= deltaTime;
 	}
 
 	@Override
@@ -183,9 +192,19 @@ public class Player extends GameEntity {
 			hudFont.draw(batch, "Current weapon: " + weaponNameField.get(null), 10, 10, Color.BLACK);
 		} catch(Exception e) {
 		}
+
+		if (shootCooldown > 0.0f) {
+			shapeRenderer.setColor(Color.BLACK);
+			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 50, 100, 20);
+			shapeRenderer.setColor(Color.WHITE);
+			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 50, 100 * (shootCooldown / SHOOTING_COOLDOWN), 20);
+		}
 	}
 
 	public void fire() {
+		if (shootCooldown > 0.0f) {
+			return;
+		}
 		Bullet bullet = this.scene.createEntity("Bullet" + bulletCounter, this.bulletTypes.get(this.currentBulletType));
 		bulletCounter++;
 		Vector3 screen = new Vector3((float)Gdx.input.getX(), (float)Gdx.input.getY(), 0.0f);
@@ -200,5 +219,6 @@ public class Player extends GameEntity {
 		bullet.physicalBody.setLinearVelocity(vel);
 
 		this.shootSound.play();
+		shootCooldown = SHOOTING_COOLDOWN - (SHOOTING_BONUS_FOR_KILLS * this.killedEnemies);
 	}
 }
