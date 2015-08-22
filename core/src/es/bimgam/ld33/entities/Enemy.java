@@ -189,6 +189,7 @@ public class Enemy extends GameEntity {
 			timeToRegenerateHP = HEALTH_REGENERATION;
 			if (this.health <= 0) {
 				this.scene.destroyEntity(this);
+				this.player.killedEnemies ++;
 			}
 			this.scene.destroyEntity(entity);
 		}

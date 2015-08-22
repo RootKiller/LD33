@@ -31,6 +31,8 @@ public class Player extends GameEntity {
 
 	private int bulletCounter;
 
+	public int killedEnemies;
+
 	private Vector2 centerPoint = new Vector2();
 
 	private Vector2 velocity = new Vector2(0.0f, 0.0f);
