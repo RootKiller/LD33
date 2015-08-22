@@ -24,7 +24,7 @@ public class Player extends GameEntity {
 
 	static private final String SPRITE_FILE = "entities/sprites/PLAYER/character.png";
 
-	static private final float SHOOTING_COOLDOWN = 0.3f;
+	static private final float SHOOTING_COOLDOWN = 0.8f;
 
 	static private final float SHOOTING_BONUS_FOR_KILLS = 0.01f;
 
