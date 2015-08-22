@@ -2,12 +2,9 @@ package es.bimgam.ld33;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import es.bimgam.ld33.input.Bind;
 import es.bimgam.ld33.input.BindPool;
@@ -74,6 +71,6 @@ public class LD33 extends ApplicationAdapter {
 	}
 
 	private void registerStates() {
-		this.stateManager.register(new MenuState());
+		this.stateManager.register(MenuState.class);
 	}
 }

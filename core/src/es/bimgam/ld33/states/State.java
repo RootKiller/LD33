@@ -2,17 +2,14 @@ package es.bimgam.ld33.states;
 
 public class State {
 
-	private String name;
-
 	public StateManager manager;
 
-	State(String name) {
-		this.name = name;
+	State() {
 		this.manager = null;
 	}
 
 	public String getName() {
-		return this.name;
+		return "Base state";
 	}
 
 	public void activate() {

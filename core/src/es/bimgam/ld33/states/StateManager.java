@@ -3,7 +3,7 @@ package es.bimgam.ld33.states;
 import java.util.HashMap;
 
 public class StateManager {
-	private HashMap<String, State> states = new HashMap<String, State>();
+	private HashMap<String, Class<? extends State>> states = new HashMap<String, Class<? extends State>>();
 
 	private State activeState;
 
@@ -25,9 +25,33 @@ public class StateManager {
 		Instance = null;
 	}
 
-	public void register(State state) {
-		state.manager = this;
-		this.states.put(state.getName(), state);
+	public void register(Class<? extends State> stateClass) {
+		State tempState = null;
+		try {
+			tempState = stateClass.newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		this.states.put(tempState.getName(), stateClass);
+	}
+
+	public boolean setActiveState(Class<? extends  State> stateClass) {
+		if (! this.states.containsValue(stateClass)) {
+			return false;
+		}
+
+		if (this.activeState != null) {
+			this.activeState.deactivate();
+		}
+		try {
+			this.activeState = stateClass.newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (this.activeState != null) {
+			this.activeState.activate();
+		}
+		return true;
 	}
 
 	public boolean setActiveState(String stateName) {
@@ -38,7 +62,11 @@ public class StateManager {
 		if (this.activeState != null) {
 			this.activeState.deactivate();
 		}
-		this.activeState = this.states.get(stateName);
+		try {
+			this.activeState = this.states.get(stateName).newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (this.activeState != null) {
 			this.activeState.activate();
 		}

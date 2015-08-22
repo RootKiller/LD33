@@ -23,9 +23,12 @@ public class MenuState extends State {
 	private static final String HORNY_PEPPERS_LOGO = "interface/horny_peppers_logo.png";
 
 	public MenuState() {
-		super("MenuState");
-
 		this.assetsManager = LD33.Instance.getAssetsManager();
+	}
+
+	@Override
+	public String getName() {
+		return "MenuState";
 	}
 
 	@Override
