@@ -68,15 +68,15 @@ public class LD33 extends ApplicationAdapter {
 		new Bind(Input.Keys.ENTER, true, new Runnable() {
 			@Override
 			public void run() {
-				if (Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)) {
-					if (Gdx.graphics.isFullscreen()) {
-						Gdx.graphics.setDisplayMode(1280, 720, false);
-					}
-					else {
-						Gdx.graphics.setDisplayMode(1920, 1080, true);
-					}
+			if (Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)) {
+				if (Gdx.graphics.isFullscreen()) {
+					Gdx.graphics.setDisplayMode(1280, 720, false);
+				}
+				else {
+					Gdx.graphics.setDisplayMode(1920, 1080, true);
 				}
 			}
+		}
 		});
 	}
 
