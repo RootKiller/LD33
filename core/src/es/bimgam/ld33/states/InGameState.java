@@ -31,9 +31,10 @@ public class InGameState extends State {
 
 	private ShapeRenderer shapeRenderer;
 
-	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-
 	private Font hudFont;
+
+	private int enemyCounter = 0;
+	private float timeToSpawnNewEntities = 0.0f;
 
 	public InGameState(StateManager stateManager, Stage stage, Skin skin) {
 		super(stateManager, stage, skin);
@@ -42,6 +43,7 @@ public class InGameState extends State {
 	public String getName() {
 		return "InGameState";
 	}
+
 
 	@Override
 	public void activate() {
@@ -62,8 +64,14 @@ public class InGameState extends State {
 		this.player = this.scene.createEntity("Player", Player.class);
 
 		for (int i = 0; i < 500; ++i) {
-			enemies.add(this.scene.createEntity("Enemy " + i, Enemy.class));
+			createEnemy();
 		}
+		timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
+	}
+
+	private void createEnemy() {
+		this.scene.createEntity("Enemy " + this.enemyCounter, Enemy.class);
+		this.enemyCounter ++;
 	}
 
 	@Override
@@ -106,6 +114,14 @@ public class InGameState extends State {
 	@Override
 	public void tick(float deltaTime) {
 		this.scene.tick(deltaTime);
+
+		timeToSpawnNewEntities -= deltaTime;
+		if (timeToSpawnNewEntities <= 0.0f) {
+			for (int i = 0; i < 20 + (int)(Math.random() * 100.0); ++i) {
+				createEnemy();
+			}
+			timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
+		}
 	}
 
 	@Override
