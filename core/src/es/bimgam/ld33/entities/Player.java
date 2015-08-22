@@ -3,9 +3,11 @@ package es.bimgam.ld33.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +15,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import es.bimgam.ld33.core.Debug;
+import es.bimgam.ld33.graphics.Font;
+
+import java.util.ArrayList;
 
 public class Player extends GameEntity {
 
@@ -30,10 +35,16 @@ public class Player extends GameEntity {
 
 	private Vector2 velocity = new Vector2(0.0f, 0.0f);
 
+	private ArrayList<Class<? extends Bullet>> bulletTypes = new ArrayList<Class<? extends Bullet>>();
+	private int currentBulletType = 0;
+
 	public Player(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
 
 		this.wasFireButtonPressed = false;
+
+		bulletTypes.add(Bullet.class);
+		bulletTypes.add(FreezingBullet.class);
 	}
 
 	@Override
@@ -96,6 +107,14 @@ public class Player extends GameEntity {
 			velocity.x += 1.0f;
 		}
 
+		if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+			this.currentBulletType = (this.currentBulletType + 1) % this.bulletTypes.size();
+		}
+
+		if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+			this.currentBulletType = (this.currentBulletType + (this.bulletTypes.size() - 1)) % this.bulletTypes.size();
+		}
+
 		final boolean isFireButtonPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
 		final boolean fire = (isFireButtonPressed && (! wasFireButtonPressed));
 		wasFireButtonPressed = isFireButtonPressed;
@@ -103,7 +122,6 @@ public class Player extends GameEntity {
 		if (fire) {
 			fire();
 		}
-
 
 		if (velocity.len() > 0.0f) {
 			this.physicalBody.setTransform(this.physicalBody.getPosition().add(velocity), this.physicalBody.getAngle());
@@ -150,8 +168,13 @@ public class Player extends GameEntity {
 		return Vector2.Zero;
 	}
 
+	@Override
+	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
+		hudFont.draw(batch, "Current weapon: " + this.bulletTypes.get(this.currentBulletType).getName(), 10, 10, Color.BLACK);
+	}
+
 	public void fire() {
-		Bullet bullet = this.scene.createEntity("Bullet" + bulletCounter, Bullet.class);
+		Bullet bullet = this.scene.createEntity("Bullet" + bulletCounter, this.bulletTypes.get(this.currentBulletType));
 		bulletCounter++;
 		Vector3 screen = new Vector3((float)Gdx.input.getX(), (float)Gdx.input.getY(), 0.0f);
 		Vector3 world = this.scene.unproject(screen);

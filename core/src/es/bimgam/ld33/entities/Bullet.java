@@ -21,10 +21,13 @@ public class Bullet extends GameEntity {
 	private float lifeTime;
 	private Vector2 centerPoint = new Vector2();
 
+	private int damage;
+
 	public Bullet(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
 
-		lifeTime = 5.0f;
+		this.lifeTime = 5.0f;
+		this.damage = 1;
 	}
 
 	@Override
@@ -76,7 +79,6 @@ public class Bullet extends GameEntity {
 		}
 
 		lifeTime -= deltaTime;
-		Debug.Log(lifeTime);
 		if (lifeTime <= 0.0f) {
 			this.scene.destroyEntity(this);
 		}
@@ -106,5 +108,9 @@ public class Bullet extends GameEntity {
 			return this.physicalBody.getPosition();
 		}
 		return Vector2.Zero;
+	}
+
+	public int getDamage() {
+		return this.damage;
 	}
 }

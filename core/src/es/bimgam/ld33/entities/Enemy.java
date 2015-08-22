@@ -3,19 +3,24 @@ package es.bimgam.ld33.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.*;
 import es.bimgam.ld33.core.Debug;
+import es.bimgam.ld33.graphics.Font;
 
 public class Enemy extends GameEntity {
 
 	static private final String SPRITE_FILE = "entities/sprites/ENEMY/character.png";
+
+	static private final int MAX_HEALTH = 5;
+
+	static private final float HEALTH_REGENERATION = 4.0f;
 
 	private AssetManager assetManager;
 	private World physicalWorld;
@@ -28,11 +33,20 @@ public class Enemy extends GameEntity {
 
 	private float timeToChangeTask;
 
+	private int health;
+
+	private float timeToRegenerateHP;
+
+	private float freezeCooldown;
+
 	public Enemy(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
 
 		this.timeToChangeTask = 0.0f;
 		this.player = scene.find("Player");
+
+		this.health = MAX_HEALTH;
+		this.freezeCooldown = 0.0f;
 	}
 
 	@Override
@@ -75,7 +89,8 @@ public class Enemy extends GameEntity {
 
 			float dot = playerPos.dot(myPos);
 
-			this.physicalBody.setLinearVelocity(new Vector2((float)Math.random(), (float)Math.random()));
+			final float MOVEMENT_SPEED = 10.0f;
+			this.physicalBody.setLinearVelocity(new Vector2((float)Math.random() * MOVEMENT_SPEED, (float)Math.random() * MOVEMENT_SPEED));
 
 			timeToChangeTask = (float) Math.random() * 10.0f;
 		}
@@ -97,6 +112,25 @@ public class Enemy extends GameEntity {
 
 			this.sprite.setRotation(this.physicalBody.getAngle());
 		}
+
+		if (this.health < MAX_HEALTH) {
+			timeToRegenerateHP -= deltaTime;
+			if (timeToRegenerateHP <= 0.0f) {
+				this.health ++;
+				timeToRegenerateHP = HEALTH_REGENERATION;
+			}
+		}
+
+		if (this.freezeCooldown > 0.0f) {
+			if (this.physicalBody.getType() != BodyDef.BodyType.StaticBody) {
+				this.physicalBody.setType(BodyDef.BodyType.StaticBody);
+			}
+			this.freezeCooldown -= deltaTime;
+
+			if (this.freezeCooldown <= 0.0f) {
+				this.physicalBody.setType(BodyDef.BodyType.DynamicBody);
+			}
+		}
 	}
 
 	@Override
@@ -116,6 +150,31 @@ public class Enemy extends GameEntity {
 	}
 
 	@Override
+	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
+		if (this.health < MAX_HEALTH) {
+			Vector2 myPosition = getPosition();
+			Vector3 world = new Vector3(myPosition.x, myPosition.y + 15.0f, 0);
+			Vector3 screen = this.scene.project(world);
+			screen.x -= 50.0f;
+			shapeRenderer.setColor(Color.BLACK);
+			shapeRenderer.rect(screen.x, screen.y, 100, 10);
+			shapeRenderer.setColor(Color.RED);
+			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * ((float)this.health / MAX_HEALTH), 6);
+		}
+
+		if (this.physicalBody.getType() == BodyDef.BodyType.StaticBody && this.freezeCooldown > 0.0f) {
+			Vector2 myPosition = getPosition();
+			Vector3 world = new Vector3(myPosition.x, myPosition.y + 20.0f, 0);
+			Vector3 screen = this.scene.project(world);
+			screen.x -= 50.0f;
+			shapeRenderer.setColor(Color.BLACK);
+			shapeRenderer.rect(screen.x, screen.y, 100, 10);
+			shapeRenderer.setColor(Color.BLUE);
+			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * ((float)this.freezeCooldown / FreezingBullet.FREEZEE_COOLDOWN), 6);
+		}
+	}
+
+	@Override
 	public Vector2 getPosition() {
 		if (this.physicalBody != null) {
 			return this.physicalBody.getPosition();
@@ -126,8 +185,19 @@ public class Enemy extends GameEntity {
 	@Override
 	public void onCollisionEnter(GameEntity entity) {
 		if (entity.getTypeName() == "Bullet") {
-			Debug.Log("HIT");
-			this.scene.destroyEntity(this);
+			this.health -= ((Bullet) entity).getDamage();
+			timeToRegenerateHP = HEALTH_REGENERATION;
+			if (this.health <= 0) {
+				this.scene.destroyEntity(this);
+			}
+			this.scene.destroyEntity(entity);
+		}
+
+		if (entity.getTypeName() == "FreezingBullet") {
+			if (this.physicalBody.getType() != BodyDef.BodyType.StaticBody) {
+				this.freezeCooldown = FreezingBullet.FREEZEE_COOLDOWN;
+			}
+
 			this.scene.destroyEntity(entity);
 		}
 	}
