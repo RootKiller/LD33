@@ -89,7 +89,7 @@ public class Enemy extends GameEntity {
 
 			float dot = playerPos.dot(myPos);
 
-			final float MOVEMENT_SPEED = 10.0f;
+			final float MOVEMENT_SPEED = 100.0f;
 			this.physicalBody.setLinearVelocity(new Vector2((float)Math.random() * MOVEMENT_SPEED, (float)Math.random() * MOVEMENT_SPEED));
 
 			timeToChangeTask = (float) Math.random() * 10.0f;
