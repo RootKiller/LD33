@@ -6,6 +6,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import es.bimgam.ld33.entities.Scene;
+import es.bimgam.ld33.graphics.Font;
 import es.bimgam.ld33.input.Bind;
 import es.bimgam.ld33.input.BindPool;
 
@@ -24,6 +29,13 @@ public class LD33 extends ApplicationAdapter {
 
 	private StateManager stateManager;
 
+	private Scene scene;
+
+	private Stage stage;
+	private Skin skin;
+
+	private Font uiFont;
+
 	public static LD33 Instance = null;
 
 	public LD33() {
@@ -35,7 +47,19 @@ public class LD33 extends ApplicationAdapter {
 		this.bindPool = new BindPool();
 		this.commandManager = new CommandManager();
 		this.assetsManager = new AssetManager();
-		this.stateManager = new StateManager();
+
+		this.uiFont = new Font("fonts/arial.ttf", 20);
+
+		this.stage = new Stage();
+		this.skin = new Skin();
+		skin.addRegions(new TextureAtlas(Gdx.files.internal("UI/uiskin.atlas")));
+		skin.add("default-font", uiFont.getBitmapFont());
+		skin.load(Gdx.files.internal("UI/uiskin.json"));
+
+		this.stateManager = new StateManager(this.stage, this.skin);
+
+		this.scene = new Scene(this.assetsManager);
+		Gdx.input.setInputProcessor(this.stage);
 		registerStates();
 
 		this.stateManager.setActiveState("MenuState");
@@ -59,22 +83,33 @@ public class LD33 extends ApplicationAdapter {
 	}
 
 	@Override
+	public void resize(int width, int height) {
+		this.stage.getViewport().update(width, height);
+	}
+
+	@Override
 	public void render () {
 		this.assetsManager.update();
-
-		this.stateManager.tick(Gdx.graphics.getDeltaTime());
 		this.bindPool.tick();
 
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		this.stateManager.tick(Gdx.graphics.getDeltaTime());
+		this.scene.tick(Gdx.graphics.getDeltaTime());
+		this.stage.act(Gdx.graphics.getDeltaTime());
+
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		this.stateManager.render();
+		this.scene.render();
+		this.stage.draw();
 	}
 
 	@Override
 	public void dispose () {
 		this.stateManager.release();
 		this.bindPool.release();
+		this.scene.dispose();
+		this.stage.dispose();
 
 		this.assetsManager.dispose();
 	}

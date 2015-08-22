@@ -1,5 +1,8 @@
 package es.bimgam.ld33.states;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import java.util.HashMap;
 
 public class StateManager {
@@ -9,8 +12,14 @@ public class StateManager {
 
 	public static StateManager Instance = null;
 
-	public StateManager() {
+	private Stage stage;
+	private Skin skin;
+
+	public StateManager(Stage stage, Skin skin) {
 		Instance = this;
+
+		this.stage = stage;
+		this.skin = skin;
 
 		this.activeState = null;
 	}
@@ -28,7 +37,7 @@ public class StateManager {
 	public void register(Class<? extends State> stateClass) {
 		State tempState = null;
 		try {
-			tempState = stateClass.newInstance();
+			tempState = stateClass.getConstructor(StateManager.class, Stage.class, Skin.class).newInstance(this, stage, skin);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -44,7 +53,7 @@ public class StateManager {
 			this.activeState.deactivate();
 		}
 		try {
-			this.activeState = stateClass.newInstance();
+			this.activeState = stateClass.getConstructor(StateManager.class, Stage.class, Skin.class).newInstance(this, stage, skin);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -63,7 +72,7 @@ public class StateManager {
 			this.activeState.deactivate();
 		}
 		try {
-			this.activeState = this.states.get(stateName).newInstance();
+			this.activeState = this.states.get(stateName).getConstructor(StateManager.class, Stage.class, Skin.class).newInstance(this, stage, skin);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

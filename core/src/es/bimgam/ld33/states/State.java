@@ -1,11 +1,18 @@
 package es.bimgam.ld33.states;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 public class State {
 
 	public StateManager manager;
+	public Stage stage;
+	public Skin skin;
 
-	State() {
-		this.manager = null;
+	public State(StateManager manager, Stage stage, Skin skin) {
+		this.manager = manager;
+		this.stage = stage;
+		this.skin = skin;
 	}
 
 	public String getName() {

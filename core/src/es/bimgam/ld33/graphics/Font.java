@@ -66,4 +66,8 @@ public class Font {
 	public void dispose() {
 		this.font.dispose();
     }
+
+	public BitmapFont getBitmapFont() {
+		return this.font;
+	}
 }
