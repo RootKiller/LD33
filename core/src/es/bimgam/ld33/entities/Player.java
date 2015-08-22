@@ -3,6 +3,7 @@ package es.bimgam.ld33.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -37,6 +38,8 @@ public class Player extends GameEntity {
 
 	private Vector2 velocity = new Vector2(0.0f, 0.0f);
 
+	private Sound shootSound;
+
 	private ArrayList<Class<? extends Bullet>> bulletTypes = new ArrayList<Class<? extends Bullet>>();
 	private int currentBulletType = 0;
 
@@ -47,6 +50,8 @@ public class Player extends GameEntity {
 
 		bulletTypes.add(Bullet.class);
 		bulletTypes.add(FreezingBullet.class);
+
+		this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sound/shoot.ogg"));
 	}
 
 	@Override
@@ -193,5 +198,7 @@ public class Player extends GameEntity {
 		vel.x *= 100.0f;
 		vel.y *= 100.0f;
 		bullet.physicalBody.setLinearVelocity(vel);
+
+		this.shootSound.play();
 	}
 }
