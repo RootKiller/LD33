@@ -14,9 +14,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
-import es.bimgam.ld33.core.Debug;
 import es.bimgam.ld33.graphics.Font;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class Player extends GameEntity {
@@ -172,7 +172,12 @@ public class Player extends GameEntity {
 
 	@Override
 	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
-		hudFont.draw(batch, "Current weapon: " + this.bulletTypes.get(this.currentBulletType).getName(), 10, 10, Color.BLACK);
+		Field weaponNameField = null;
+		try {
+			weaponNameField = this.bulletTypes.get(this.currentBulletType).getField("WEAPON_NAME");
+			hudFont.draw(batch, "Current weapon: " + weaponNameField.get(null), 10, 10, Color.BLACK);
+		} catch(Exception e) {
+		}
 	}
 
 	public void fire() {
