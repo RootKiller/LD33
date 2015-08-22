@@ -2,6 +2,7 @@ package es.bimgam.ld33.states;
 
 import com.badlogic.gdx.Gdx;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -60,7 +61,7 @@ public class InGameState extends State {
 
 		this.player = this.scene.createEntity("Player", Player.class);
 
-		for (int i = 0; i < 100; ++i) {
+		for (int i = 0; i < 500; ++i) {
 			enemies.add(this.scene.createEntity("Enemy " + i, Enemy.class));
 		}
 	}
@@ -82,7 +83,8 @@ public class InGameState extends State {
 
 	@Override
 	public void render() {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Color color = new Color(0x4470a7ff);
+		Gdx.gl.glClearColor(color.r, color.g, color. b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		this.orthoCamera.position.set(this.player.getPosition(), 0);
