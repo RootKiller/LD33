@@ -83,6 +83,7 @@ public class LD33 extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 		this.stage.getViewport().update(width, height);
+		this.stateManager.resize(width, height);
 	}
 
 	@Override
