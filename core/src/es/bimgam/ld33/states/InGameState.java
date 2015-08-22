@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -15,17 +16,23 @@ import es.bimgam.ld33.LD33;
 import es.bimgam.ld33.entities.Enemy;
 import es.bimgam.ld33.entities.Scene;
 import es.bimgam.ld33.entities.Player;
+import es.bimgam.ld33.graphics.Font;
 
 import java.util.ArrayList;
 
 public class InGameState extends State {
 	private OrthographicCamera orthoCamera;
 	private SpriteBatch spriteBatch;
+	private SpriteBatch hudSpriteBatch;
 	private Scene scene;
 
 	private Player player;
 
+	private ShapeRenderer shapeRenderer;
+
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
+
+	private Font hudFont;
 
 	public InGameState(StateManager stateManager, Stage stage, Skin skin) {
 		super(stateManager, stage, skin);
@@ -35,15 +42,11 @@ public class InGameState extends State {
 		return "InGameState";
 	}
 
-	public Vector3 unproject(Vector3 screen) {
-		if (orthoCamera == null) {
-			return Vector3.Zero;
-		}
-		return orthoCamera.unproject(screen);
-	}
-
 	@Override
 	public void activate() {
+		this.shapeRenderer = new ShapeRenderer();
+		this.hudFont = new Font("fonts/segoepr.ttf", 20);
+
 		float width = Gdx.graphics.getWidth();
 		float height = Gdx.graphics.getHeight();
 		this.orthoCamera = new OrthographicCamera(300.0f, 300.0f * (height / width));
@@ -51,6 +54,7 @@ public class InGameState extends State {
 		this.orthoCamera.update();
 
 		this.spriteBatch = new SpriteBatch();
+		this.hudSpriteBatch = new SpriteBatch();
 
 		this.scene = new Scene(this, LD33.Instance.getAssetsManager(), this.orthoCamera);
 
@@ -63,11 +67,17 @@ public class InGameState extends State {
 
 	@Override
 	public void deactivate() {
+		this.shapeRenderer.dispose();
+		this.shapeRenderer = null;
 		this.player = null;
 		this.orthoCamera = null;
 		this.spriteBatch = null;
 		this.scene.dispose();
 		this.scene = null;
+		this.hudFont.dispose();
+		this.hudFont = null;
+		this.hudSpriteBatch.dispose();
+		this.hudSpriteBatch = null;
 	}
 
 	@Override
@@ -83,6 +93,12 @@ public class InGameState extends State {
 		this.spriteBatch.begin();
 		this.scene.render(this.spriteBatch);
 		this.spriteBatch.end();
+
+		this.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+		this.hudSpriteBatch.begin();
+		this.scene.drawHudElements(this.shapeRenderer, this.hudSpriteBatch, this.hudFont);
+		this.hudSpriteBatch.end();
+		this.shapeRenderer.end();
 	}
 
 	@Override

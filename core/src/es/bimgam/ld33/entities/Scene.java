@@ -3,10 +3,12 @@ package es.bimgam.ld33.entities;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import es.bimgam.ld33.core.Debug;
+import es.bimgam.ld33.graphics.Font;
 import es.bimgam.ld33.states.InGameState;
 
 import java.lang.reflect.Constructor;
@@ -83,7 +85,11 @@ public class Scene {
 	}
 
 	public Vector3 unproject(Vector3 screen) {
-		return this.state.unproject(screen);
+		return this.camera.unproject(screen);
+	}
+
+	public Vector3 project(Vector3 world) {
+		return this.camera.project(world);
 	}
 
 	private void flushToRemove() {
@@ -96,7 +102,6 @@ public class Scene {
 				if (pair.getValue() == entity) {
 					this.entitiesToRemove.remove(entity);
 					entity.dispose();
-					Debug.Log("Removed " + entity.getTypeName());
 					this.entities.remove(pair);
 					break;
 				}
@@ -191,4 +196,14 @@ public class Scene {
 		}
 	}
 
+	public void drawHudElements(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
+		for (Map.Entry<String, GameEntity> pair : this.entities.entrySet()) {
+			GameEntity entity = pair.getValue();
+			if (! entity.isAlive()) {
+				continue;
+			}
+
+			entity.drawHudElement(shapeRenderer, batch, hudFont);
+		}
+	}
 }

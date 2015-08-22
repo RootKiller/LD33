@@ -38,6 +38,13 @@ public class Font {
 		this.font.draw(batch, glyphLayout, x, graphics.getHeight() - y);
 	}
 
+	public void draw(Batch batch, CharSequence str, float x, float y, Color color) {
+		this.glyphLayout.setText(font, str);
+		this.font.setColor(color);
+		this.font.draw(batch, glyphLayout, x, graphics.getHeight() - y);
+	}
+
+
 	public void draw(Batch batch, CharSequence str, float x, float y, Color color, float targetWidth, int halign, boolean wrap) {
 		this.glyphLayout.setText(font, str, color, targetWidth, halign, wrap);
 		this.font.draw(batch, glyphLayout, x, graphics.getHeight() - y);

@@ -3,9 +3,11 @@ package es.bimgam.ld33.entities;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import es.bimgam.ld33.graphics.Font;
 
 public class GameEntity {
 
@@ -63,6 +65,9 @@ public class GameEntity {
 	}
 
 	public void onCollisionExit(GameEntity entity) {
+	}
+
+	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
 	}
 
 	public Vector2 getPosition() {
