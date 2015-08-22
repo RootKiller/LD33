@@ -25,6 +25,7 @@ public class Font {
 		FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		fontParameter.size = size;
 		fontParameter.characters = POLISH_CHARACTERS;
+		fontParameter.color = Color.WHITE;
 
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontName));
 		this.font = fontGenerator.generateFont(fontParameter);
@@ -34,20 +35,12 @@ public class Font {
 	}
 
 	public void draw(Batch batch, CharSequence str, float x, float y) {
-		this.glyphLayout.setText(font, str);
-		this.font.draw(batch, glyphLayout, x, graphics.getHeight() - y);
+		this.font.draw(batch, str, x, graphics.getHeight() - y);
 	}
 
 	public void draw(Batch batch, CharSequence str, float x, float y, Color color) {
-		this.glyphLayout.setText(font, str);
 		this.font.setColor(color);
-		this.font.draw(batch, glyphLayout, x, graphics.getHeight() - y);
-	}
-
-
-	public void draw(Batch batch, CharSequence str, float x, float y, Color color, float targetWidth, int halign, boolean wrap) {
-		this.glyphLayout.setText(font, str, color, targetWidth, halign, wrap);
-		this.font.draw(batch, glyphLayout, x, graphics.getHeight() - y);
+		this.font.draw(batch, str, x, graphics.getHeight() - y);
 	}
 
 	public float getRenderWidth(CharSequence str) {
