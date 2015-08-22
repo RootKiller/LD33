@@ -13,6 +13,8 @@ import es.bimgam.ld33.core.Debug;
 
 public class Bullet extends GameEntity {
 
+	static public final String WEAPON_NAME = "Normal weapon";
+
 	static private final String SPRITE_FILE = "entities/sprites/BULLET/bullet.png";
 
 	private CircleShape circleShape;

@@ -10,6 +10,8 @@ import es.bimgam.ld33.core.Debug;
 
 public class FreezingBullet extends Bullet {
 
+	static public final String WEAPON_NAME = "Freezer";
+
 	static private final String SPRITE_FILE = "entities/sprites/BULLET/freezingBullet.png";
 
 	public final static float FREEZEE_COOLDOWN = 5.0f;
