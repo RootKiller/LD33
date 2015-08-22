@@ -32,7 +32,7 @@ public class Bind {
 		isActive = this.down ? isPressed : !isPressed;
 
 		if (isActive) {
-			if (this.command.length() > 0) {
+			if (this.command != null && this.command.length() > 0) {
 				CommandManager.Instance.execute(this.command);
 			}
 
