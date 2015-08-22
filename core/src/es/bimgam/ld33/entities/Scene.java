@@ -128,8 +128,10 @@ public class Scene {
 		processToCreate();
 		for (GameEntity entity : this.entities.values()) {
 			entity.destroy();
+			entity.dispose();
 		}
 		entities.clear();
+		world.dispose();
 	}
 
 	public <T extends GameEntity> T find(String name) {

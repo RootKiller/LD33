@@ -75,6 +75,15 @@ public class Player extends GameEntity {
 	}
 
 	@Override
+	public void dispose() {
+		super.dispose();
+
+		this.shootSound.dispose();
+		this.hitSound.dispose();
+		this.circleShape.dispose();
+	}
+
+	@Override
 	public String getTypeName() {
 		return "Player";
 	}
