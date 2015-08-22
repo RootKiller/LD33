@@ -113,5 +113,6 @@ public class LD33 extends ApplicationAdapter {
 
 	private void registerStates() {
 		this.stateManager.register(MenuState.class);
+		this.stateManager.register(InGameState.class);
 	}
 }
