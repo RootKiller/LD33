@@ -22,6 +22,8 @@ public class Enemy extends GameEntity {
 
 	static private final float HEALTH_REGENERATION = 4.0f;
 
+	private final static float AI_MINIMAL_DIST_DO_PLAYER = 60.0f;
+
 	private AssetManager assetManager;
 	private World physicalWorld;
 
@@ -80,20 +82,39 @@ public class Enemy extends GameEntity {
 		this.physicalBody.createFixture(fixtureDef);
 	}
 
-	private void doAIWork(float deltaTime) {
+	private void ai_doWork(float deltaTime) {
+		// If we are under "freezer" effect do not process "AI"
+		if (this.freezeCooldown > 0.0f) {
+			return;
+		}
+
 		timeToChangeTask -= deltaTime;
 
 		if (timeToChangeTask <= 0.0f) {
-			// Vector2 playerPos = this.player.getPosition().nor();
-			// Vector2 myPos = getPosition().nor();
+			Vector2 playerPos = this.player.getPosition();
+			Vector2 myPos = getPosition();
 
-			// float dot = playerPos.dot(myPos);
-
-			final float MOVEMENT_SPEED = 15.0f;
-			this.physicalBody.setLinearVelocity(new Vector2((float)Math.random() * MOVEMENT_SPEED, (float)Math.random() * MOVEMENT_SPEED));
+			if (Vector2.dst2(playerPos.x, playerPos.y, myPos.x, myPos.y) < (AI_MINIMAL_DIST_DO_PLAYER * AI_MINIMAL_DIST_DO_PLAYER)) {
+				ai_runAwayFromPlayer();
+			}
+			else {
+				final float MOVEMENT_SPEED = 15.0f;
+				this.physicalBody.setLinearVelocity(new Vector2((float)(-1.0f + Math.random() * 2.0f) * MOVEMENT_SPEED, (float)(-1.0f + Math.random() * 2.0f) * MOVEMENT_SPEED));
+			}
 
 			timeToChangeTask = (float) Math.random() * 10.0f;
 		}
+	}
+
+	private void ai_runAwayFromPlayer() {
+		Vector2 playerPos = this.player.getPosition();
+		Vector2 myPos = getPosition();
+		Vector2 direction = playerPos.sub(myPos).nor();
+
+		final float MOVEMENT_SPEED = 35.0f;
+		this.physicalBody.setLinearVelocity(-direction.x * MOVEMENT_SPEED, -direction.y * MOVEMENT_SPEED);
+
+		timeToChangeTask = (float) Math.random() * 10.0f;
 	}
 
 	@Override
@@ -104,7 +125,7 @@ public class Enemy extends GameEntity {
 
 	@Override
 	public void tick(float deltaTime) {
-		doAIWork(deltaTime);
+		ai_doWork(deltaTime);
 
 		if (this.sprite != null) {
 			Vector2 pos = this.physicalBody.getPosition();
@@ -130,6 +151,7 @@ public class Enemy extends GameEntity {
 
 			if (this.freezeCooldown <= 0.0f) {
 				this.physicalBody.setType(BodyDef.BodyType.DynamicBody);
+				ai_runAwayFromPlayer();
 			}
 		}
 	}
