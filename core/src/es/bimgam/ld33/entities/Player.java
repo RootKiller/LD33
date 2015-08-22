@@ -57,7 +57,7 @@ public class Player extends GameEntity {
 		this.physicalWorld = world;
 
 		BodyDef def = new BodyDef();
-		def.type = BodyDef.BodyType.DynamicBody;
+		def.type = BodyDef.BodyType.KinematicBody;
 		def.position.set(0, 0);
 		def.fixedRotation = true;
 
@@ -70,8 +70,8 @@ public class Player extends GameEntity {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = circleShape;
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.4f;
-		fixtureDef.restitution = 0.6f;
+		fixtureDef.friction = 1.0f;
+		fixtureDef.restitution = 0.0f;
 		fixtureDef.filter.categoryBits = CollisionMasks.PLAYER;
 		fixtureDef.filter.maskBits = CollisionMasks.ENEMY;
 
