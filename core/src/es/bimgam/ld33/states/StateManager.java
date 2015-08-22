@@ -93,4 +93,10 @@ public class StateManager {
 			this.activeState.render();
 		}
 	}
+
+	public void resize(int width, int height) {
+		if (this.activeState != null) {
+			this.activeState.resize(width, height);
+		}
+	}
 }
