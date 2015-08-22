@@ -1,0 +1,7 @@
+package es.bimgam.ld33.entities;
+
+public class CollisionMasks {
+	public final static short PLAYER 	= 0x0001;
+	public final static short ENEMY		= 0x0002;
+	public final static short BULLET 	= 0x0004;
+}
