@@ -44,6 +44,7 @@ public class Player extends GameEntity {
 	private Vector2 velocity = new Vector2(0.0f, 0.0f);
 
 	private Sound shootSound;
+	private Sound hitSound;
 
 	private ArrayList<Class<? extends Bullet>> bulletTypes = new ArrayList<Class<? extends Bullet>>();
 	private int currentBulletType = 0;
@@ -65,6 +66,7 @@ public class Player extends GameEntity {
 
 		this.shootCooldown = 0.0f;
 		this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sound/shoot.ogg"));
+		this.hitSound = Gdx.audio.newSound(Gdx.files.internal("sound/hit.ogg"));
 
 		this.xp = 0;
 		this.level = 1;
@@ -251,5 +253,9 @@ public class Player extends GameEntity {
 
 		this.shootSound.play();
 		shootCooldown = SHOOTING_COOLDOWN - (SHOOTING_BONUS_FOR_KILLS * this.killedEnemies);
+	}
+
+	public void onHitEnemy(Enemy enemy) {
+		this.hitSound.play();
 	}
 }

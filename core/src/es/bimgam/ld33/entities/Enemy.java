@@ -3,6 +3,7 @@ package es.bimgam.ld33.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -209,6 +210,7 @@ public class Enemy extends GameEntity {
 	public void onCollisionEnter(GameEntity entity) {
 		if (entity.getTypeName() == "Bullet") {
 			this.health -= ((Bullet) entity).getDamage();
+			this.player.onHitEnemy(this);
 			timeToRegenerateHP = HEALTH_REGENERATION;
 			if (this.health <= 0) {
 				this.scene.destroyEntity(this);
