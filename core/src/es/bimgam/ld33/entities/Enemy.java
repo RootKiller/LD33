@@ -124,6 +124,7 @@ public class Enemy extends GameEntity {
 		if (this.freezeCooldown > 0.0f) {
 			if (this.physicalBody.getType() != BodyDef.BodyType.StaticBody) {
 				this.physicalBody.setType(BodyDef.BodyType.StaticBody);
+				this.physicalBody.setLinearVelocity(Vector2.Zero);
 			}
 			this.freezeCooldown -= deltaTime;
 
