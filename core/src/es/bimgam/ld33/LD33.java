@@ -16,6 +16,7 @@ import es.bimgam.ld33.input.BindPool;
 
 import es.bimgam.ld33.core.CommandManager;
 
+import es.bimgam.ld33.states.InGameState;
 import es.bimgam.ld33.states.MenuState;
 
 import es.bimgam.ld33.states.StateManager;
@@ -28,8 +29,6 @@ public class LD33 extends ApplicationAdapter {
 	private AssetManager assetsManager;
 
 	private StateManager stateManager;
-
-	private Scene scene;
 
 	private Stage stage;
 	private Skin skin;
@@ -58,7 +57,6 @@ public class LD33 extends ApplicationAdapter {
 
 		this.stateManager = new StateManager(this.stage, this.skin);
 
-		this.scene = new Scene(this.assetsManager);
 		Gdx.input.setInputProcessor(this.stage);
 		registerStates();
 
@@ -66,8 +64,8 @@ public class LD33 extends ApplicationAdapter {
 
 		this.commandManager.register(new QuitCommand());
 
-		this.bindPool.register(new Bind(Input.Keys.ESCAPE, true, "quit"));
-		this.bindPool.register(new Bind(Input.Keys.ENTER, true, new Runnable() {
+		new Bind(Input.Keys.ESCAPE, true, "quit");
+		new Bind(Input.Keys.ENTER, true, new Runnable() {
 			@Override
 			public void run() {
 				if (Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)) {
@@ -79,7 +77,7 @@ public class LD33 extends ApplicationAdapter {
 					}
 				}
 			}
-		}));
+		});
 	}
 
 	@Override
@@ -93,14 +91,9 @@ public class LD33 extends ApplicationAdapter {
 		this.bindPool.tick();
 
 		this.stateManager.tick(Gdx.graphics.getDeltaTime());
-		this.scene.tick(Gdx.graphics.getDeltaTime());
 		this.stage.act(Gdx.graphics.getDeltaTime());
 
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		this.stateManager.render();
-		this.scene.render();
 		this.stage.draw();
 	}
 
@@ -108,7 +101,6 @@ public class LD33 extends ApplicationAdapter {
 	public void dispose () {
 		this.stateManager.release();
 		this.bindPool.release();
-		this.scene.dispose();
 		this.stage.dispose();
 
 		this.assetsManager.dispose();
