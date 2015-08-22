@@ -213,6 +213,7 @@ public class Enemy extends GameEntity {
 			if (this.health <= 0) {
 				this.scene.destroyEntity(this);
 				this.player.killedEnemies ++;
+				this.player.addXP(1);
 			}
 			this.scene.destroyEntity(entity);
 		}
