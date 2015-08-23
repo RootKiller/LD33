@@ -24,13 +24,13 @@ public class Enemy extends GameEntity {
 
 	private AssetManager assetManager;
 
-	private Player player;
+	protected Player player;
 
 	private Vector2 centerPoint = new Vector2();
 
 	private float timeToChangeTask;
 
-	private int health;
+	protected int health;
 
 	private float timeToRegenerateHP;
 
@@ -191,6 +191,7 @@ public class Enemy extends GameEntity {
 				this.player.addXP(1);
 			}
 			this.scene.destroyEntity(entity);
+			return;
 		}
 
 		if (entity.getTypeName() == "FreezingBullet") {
@@ -218,7 +219,7 @@ public class Enemy extends GameEntity {
 		drawBar(shapeRenderer, screen, Color.BLUE, this.freezeCooldown / FreezingBullet.FREEZEE_COOLDOWN);
 	}
 
-	private void drawBar(ShapeRenderer shapeRenderer, Vector3 screen, Color color, float alpha) {
+	protected void drawBar(ShapeRenderer shapeRenderer, Vector3 screen, Color color, float alpha) {
 		screen.x -= 50.0f;
 		shapeRenderer.setColor(Color.BLACK);
 		shapeRenderer.rect(screen.x, screen.y, 100, 10);
