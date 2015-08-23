@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 
+import es.bimgam.ld33.core.Debug;
 import es.bimgam.ld33.graphics.Font;
 
 import java.lang.reflect.Field;
@@ -28,6 +29,8 @@ public class Player extends GameEntity {
 	static private final float SHOOTING_COOLDOWN = 0.8f;
 
 	static private final float SHOOTING_BONUS_FOR_KILLS = 0.00001f;
+
+	static private final int STARTUP_HEALTH = 5;
 
 	private AssetManager assetManager;
 
@@ -44,13 +47,25 @@ public class Player extends GameEntity {
 	private Sound shootSound;
 	private Sound hitSound;
 
-	private ArrayList<Class<? extends Bullet>> bulletTypes = new ArrayList<Class<? extends Bullet>>();
-	private int currentBulletType = 0;
+	private class WeaponInfo {
+		Class<? extends Bullet> bullet;
+		int ammo;
+
+		public WeaponInfo(Class<? extends Bullet> bullet, int ammo) {
+			this.bullet = bullet;
+			this.ammo = ammo;
+		}
+	};
+
+	private ArrayList<WeaponInfo> weapons = new ArrayList<WeaponInfo>();
+	private int currentWeapon = 0;
 
 	private float shootCooldown;
 
 	private int xp;
 	private int level;
+
+	private int health;
 
 	private float levelUpLabel;
 
@@ -59,8 +74,7 @@ public class Player extends GameEntity {
 
 		this.wasFireButtonPressed = false;
 
-		this.bulletTypes.add(Bullet.class);
-		this.bulletTypes.add(FreezingBullet.class);
+		this.weapons.add(new WeaponInfo(Bullet.class, -1));
 
 		this.shootCooldown = 0.0f;
 		this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sound/shoot.ogg"));
@@ -70,6 +84,8 @@ public class Player extends GameEntity {
 		this.level = 1;
 
 		this.levelUpLabel = 0.0f;
+
+		this.health = STARTUP_HEALTH;
 	}
 
 	@Override
@@ -140,11 +156,11 @@ public class Player extends GameEntity {
 		}
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
-			this.currentBulletType = (this.currentBulletType + 1) % this.bulletTypes.size();
+			nextWeapon();
 		}
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-			this.currentBulletType = (this.currentBulletType + (this.bulletTypes.size() - 1)) % this.bulletTypes.size();
+			previousWeapon();
 		}
 
 		final boolean isFireButtonPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
@@ -197,13 +213,14 @@ public class Player extends GameEntity {
 	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
 		if (this.levelUpLabel > 0.0f) {
 			final float width = hudFont.getRenderWidth("Level "+this.level+"!");
-			hudFont.draw(batch, "Level "+this.level+"!", Gdx.graphics.getWidth() / 2 - width / 2, Gdx.graphics.getHeight() / 2 - 100.0f, Color.YELLOW);
+			hudFont.draw(batch, "Level " + this.level + "!", Gdx.graphics.getWidth() / 2 - width / 2, Gdx.graphics.getHeight() / 2 - 100.0f, Color.YELLOW);
 		}
 
 		Field weaponNameField = null;
 		try {
-			weaponNameField = this.bulletTypes.get(this.currentBulletType).getField("WEAPON_NAME");
-			hudFont.draw(batch, "Current weapon: " + weaponNameField.get(null), 10, 10, Color.BLACK);
+			WeaponInfo currentWeaponInfo = this.weapons.get(this.currentWeapon);
+			weaponNameField = currentWeaponInfo.bullet.getField("WEAPON_NAME");
+			hudFont.draw(batch, "Current weapon: " + weaponNameField.get(null) + " (" + ((currentWeaponInfo.ammo == -1) ? "INF" : currentWeaponInfo.ammo) + ")", 10, 10, Color.BLACK);
 		} catch(Exception e) {
 		}
 		hudFont.draw(batch, "XP: " + xp + " Level: " + level, 10, 50, Color.BLACK);
@@ -233,7 +250,13 @@ public class Player extends GameEntity {
 		if (shootCooldown > 0.0f) {
 			return;
 		}
-		Bullet bullet = this.scene.createEntity("Bullet" + bulletCounter, this.bulletTypes.get(this.currentBulletType));
+
+		WeaponInfo weaponInfo = this.weapons.get(this.currentWeapon);
+		if (weaponInfo == null) {
+			return;
+		}
+
+		Bullet bullet = this.scene.createEntity("Bullet" + bulletCounter, weaponInfo.bullet);
 		bulletCounter++;
 		Vector3 screen = new Vector3((float)Gdx.input.getX(), (float)Gdx.input.getY(), 0.0f);
 		Vector3 world = this.scene.unproject(screen);
@@ -248,9 +271,49 @@ public class Player extends GameEntity {
 
 		this.shootSound.play();
 		shootCooldown = SHOOTING_COOLDOWN - (SHOOTING_BONUS_FOR_KILLS * this.killedEnemies);
+
+		if (weaponInfo.ammo != -1) {
+			-- weaponInfo.ammo;
+			if (weaponInfo.ammo <= 0) {
+				this.weapons.remove(weaponInfo);
+				nextWeapon();
+			}
+		}
 	}
 
 	public void onHitEnemy(Enemy enemy) {
 		this.hitSound.play();
+	}
+
+	private void nextWeapon() {
+		this.currentWeapon = (this.currentWeapon + 1) % this.weapons.size();
+	}
+
+	private void previousWeapon() {
+		this.currentWeapon = (this.currentWeapon + (this.weapons.size() - 1)) % this.weapons.size();
+	}
+
+	public void addWeapon(Class<? extends Bullet> bulletType, int ammo) {
+		if (ammo <= 0) {
+			return;
+		}
+
+		for (WeaponInfo wInfo : this.weapons) {
+			if (wInfo.bullet == bulletType) {
+				wInfo.ammo += ammo;
+				return;
+			}
+		}
+
+		this.weapons.add(new WeaponInfo(bulletType, ammo));
+	}
+
+	public void takeWeapon(Class<? extends Bullet> bulletType) {
+		for (WeaponInfo wInfo : this.weapons) {
+			if (wInfo.bullet == bulletType) {
+				this.weapons.remove(wInfo);
+				break;
+			}
+		}
 	}
 }
