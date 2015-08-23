@@ -37,7 +37,7 @@ public class Scene {
 	public Scene(InGameState state, AssetManager assetManager, Camera camera) {
 		this.camera = camera;
 		this.state = state;
-		this.world = new World(Vector2.Zero, false);
+		this.world = new World(Vector2.Zero, true);
 		this.assetsManager = assetManager;
 		this.processing = false;
 
