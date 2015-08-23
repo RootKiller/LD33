@@ -14,10 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import es.bimgam.ld33.LD33;
 
-import es.bimgam.ld33.entities.Enemy;
-import es.bimgam.ld33.entities.Pickup;
-import es.bimgam.ld33.entities.Scene;
-import es.bimgam.ld33.entities.Player;
+import es.bimgam.ld33.entities.*;
 import es.bimgam.ld33.graphics.Font;
 
 public class InGameState extends State {
@@ -65,8 +62,8 @@ public class InGameState extends State {
 
 		this.player = this.scene.createEntity("Player", Player.class);
 
-		for (int i = 0; i < 500; ++i) {
-			createEnemy();
+		for (int i = 0; i < 400; ++i) {
+			createEnemy(false);
 		}
 		timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
 	}
@@ -84,8 +81,8 @@ public class InGameState extends State {
 		}
 	}
 
-	private void createEnemy() {
-		this.scene.createEntity("Enemy " + this.enemyCounter, Enemy.class);
+	private void createEnemy(boolean soldier) {
+		this.scene.createEntity("Enemy " + this.enemyCounter, soldier ? Soldier.class : Enemy.class);
 		this.enemyCounter ++;
 	}
 
@@ -145,8 +142,9 @@ public class InGameState extends State {
 					count = (ENEMIES_UPPER_LIMIT - enemiesOnScene);
 				}
 
+				int soldiers = (int) (count * 0.05f);
 				for (int i = 0; i < count; ++i) {
-					createEnemy();
+					createEnemy((i <= soldiers));
 				}
 			}
 			timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
