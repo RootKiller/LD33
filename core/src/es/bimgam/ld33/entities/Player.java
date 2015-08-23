@@ -53,6 +53,7 @@ public class Player extends GameEntity {
 	private Sound shootSound;
 	private Sound hitSound;
 	private Sound deadSound;
+	private Sound pickupSound;
 
 	// HUD
 	private Texture healthTexture;
@@ -90,6 +91,7 @@ public class Player extends GameEntity {
 		this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sound/shoot.ogg"));
 		this.hitSound = Gdx.audio.newSound(Gdx.files.internal("sound/hit.ogg"));
 		this.deadSound = Gdx.audio.newSound(Gdx.files.internal("sound/dead.ogg"));
+		this.pickupSound = Gdx.audio.newSound(Gdx.files.internal("sound/pickup.ogg"));
 
 		this.xp = 0;
 		this.level = 1;
@@ -106,6 +108,7 @@ public class Player extends GameEntity {
 		this.shootSound.dispose();
 		this.hitSound.dispose();
 		this.deadSound.dispose();
+		this.pickupSound.dispose();
 		if (this.healthTexture != null) {
 			this.healthTexture.dispose();
 		}
@@ -344,6 +347,7 @@ public class Player extends GameEntity {
 				break;
 			}
 			pickup.onPickup(this);
+			this.pickupSound.play();
 		}
 	}
 
