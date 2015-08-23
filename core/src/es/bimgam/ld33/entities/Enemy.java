@@ -175,33 +175,15 @@ public class Enemy extends GameEntity {
 
 	@Override
 	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
-		if (this.health < MAX_HEALTH) {
-			Vector2 myPosition = getPosition();
-			Vector3 world = new Vector3(myPosition.x, myPosition.y + 15.0f, 0);
-			Vector3 screen = this.scene.project(world);
-			screen.x -= 50.0f;
-			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.rect(screen.x, screen.y, 100, 10);
-			Color col = new Color(Color.RED.r * 0.75f, Color.RED.g* 0.75f, Color.RED.b* 0.75f, 1.0f);
-			shapeRenderer.setColor(col);
-			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f, 6);
-			shapeRenderer.setColor(Color.RED);
-			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * ((float)this.health / MAX_HEALTH), 6);
-		}
+		Vector2 myPosition = getPosition();
 
-		if (this.physicalBody.getType() == BodyDef.BodyType.StaticBody && this.freezeCooldown > 0.0f) {
-			Vector2 myPosition = getPosition();
-			Vector3 world = new Vector3(myPosition.x, myPosition.y + 20.0f, 0);
-			Vector3 screen = this.scene.project(world);
-			screen.x -= 50.0f;
-			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.rect(screen.x, screen.y, 100, 10);
-			Color col = new Color(Color.BLUE.r* 0.75f, Color.BLUE.g* 0.75f, Color.BLUE.b* 0.75f, 1.0f);
-			shapeRenderer.setColor(col);
-			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f, 6);
-			shapeRenderer.setColor(Color.BLUE);
-			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * (this.freezeCooldown / FreezingBullet.FREEZEE_COOLDOWN), 6);
-		}
+		Vector3 world = new Vector3(myPosition.x, myPosition.y + 15.0f, 0);
+		Vector3 screen = this.scene.project(world);
+		drawHealthBar(shapeRenderer, screen);
+
+		world = new Vector3(myPosition.x, myPosition.y + 20.0f, 0);
+		screen = this.scene.project(world);
+		drawFreezerBar(shapeRenderer, screen);
 	}
 
 	@Override
@@ -233,5 +215,32 @@ public class Enemy extends GameEntity {
 
 			this.scene.destroyEntity(entity);
 		}
+	}
+
+	private void drawHealthBar(ShapeRenderer shapeRenderer, Vector3 screen) {
+		if (this.health == MAX_HEALTH) {
+			return;
+		}
+
+		drawBar(shapeRenderer, screen, Color.RED, ((float) this.health / MAX_HEALTH));
+	}
+
+	private void drawFreezerBar(ShapeRenderer shapeRenderer, Vector3 screen) {
+		if (this.freezeCooldown <= 0.0f || this.physicalBody.getType() != BodyDef.BodyType.StaticBody) {
+			return;
+		}
+
+		drawBar(shapeRenderer, screen, Color.BLUE, this.freezeCooldown / FreezingBullet.FREEZEE_COOLDOWN);
+	}
+
+	private void drawBar(ShapeRenderer shapeRenderer, Vector3 screen, Color color, float alpha) {
+		screen.x -= 50.0f;
+		shapeRenderer.setColor(Color.BLACK);
+		shapeRenderer.rect(screen.x, screen.y, 100, 10);
+		Color col = new Color(color.r * 0.75f, color.g * 0.75f, color.b * 0.75f, 1.0f);
+		shapeRenderer.setColor(col);
+		shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f, 6);
+		shapeRenderer.setColor(color);
+		shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * alpha, 6);
 	}
 }
