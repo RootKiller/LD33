@@ -220,4 +220,8 @@ public class Scene {
 		}
 		return count;
 	}
+
+	public boolean doesEntityExists(String name) {
+		return this.entities.containsKey(name);
+	}
 }
