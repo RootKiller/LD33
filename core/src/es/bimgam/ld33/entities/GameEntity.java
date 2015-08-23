@@ -71,6 +71,16 @@ public class GameEntity {
 	}
 
 	public Vector2 getPosition() {
+		if (this.physicalBody != null) {
+			return this.physicalBody.getPosition();
+		}
 		return Vector2.Zero;
+	}
+
+	public void setPosition(Vector2 position) {
+		if (this.physicalBody != null) {
+			final float angle = this.physicalBody.getAngle();
+			this.physicalBody.setTransform(position, angle);
+		}
 	}
 }

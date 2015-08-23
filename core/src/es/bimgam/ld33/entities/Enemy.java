@@ -187,14 +187,6 @@ public class Enemy extends GameEntity {
 	}
 
 	@Override
-	public Vector2 getPosition() {
-		if (this.physicalBody != null) {
-			return this.physicalBody.getPosition();
-		}
-		return Vector2.Zero;
-	}
-
-	@Override
 	public void onCollisionEnter(GameEntity entity) {
 		if (entity.getTypeName() == "Bullet") {
 			this.health -= ((Bullet) entity).getDamage();

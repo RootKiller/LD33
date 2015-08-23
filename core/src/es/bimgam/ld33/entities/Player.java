@@ -200,14 +200,6 @@ public class Player extends GameEntity {
 	}
 
 	@Override
-	public Vector2 getPosition() {
-		if (this.physicalBody != null) {
-			return this.physicalBody.getPosition();
-		}
-		return Vector2.Zero;
-	}
-
-	@Override
 	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
 		if (this.levelUpLabel > 0.0f) {
 			final float width = hudFont.getRenderWidth("Level "+this.level+"!");
