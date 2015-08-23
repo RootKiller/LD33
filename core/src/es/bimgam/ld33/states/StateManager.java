@@ -121,4 +121,11 @@ public class StateManager {
 			this.activeState.resize(width, height);
 		}
 	}
+
+	public <T extends State> T getActiveStateSafe(Class<T> checkClass) {
+		if (this.activeState != null && this.activeState.getClass() == checkClass) {
+			return (T) this.activeState;
+		}
+		return null;
+	}
 }
