@@ -26,6 +26,8 @@ public class Player extends GameEntity {
 
 	static private final String SPRITE_FILE = "entities/sprites/PLAYER/character.png";
 
+	static private final String HEALTH_ICON_FILE = "interface/icons/health.png";
+
 	static private final float SHOOTING_COOLDOWN = 0.8f;
 
 	static private final float SHOOTING_BONUS_FOR_KILLS = 0.00001f;
@@ -47,6 +49,9 @@ public class Player extends GameEntity {
 	private Sound shootSound;
 	private Sound hitSound;
 	private Sound deadSound;
+
+	// HUD
+	private Texture healthTexture;
 
 	private class WeaponInfo {
 		Class<? extends Bullet> bullet;
@@ -96,6 +101,9 @@ public class Player extends GameEntity {
 
 		this.shootSound.dispose();
 		this.hitSound.dispose();
+		if (this.healthTexture != null) {
+			this.healthTexture.dispose();
+		}
 	}
 
 	@Override
@@ -133,6 +141,8 @@ public class Player extends GameEntity {
 	public void setupVisuals(AssetManager assetManager) {
 		this.assetManager = assetManager;
 		assetManager.load(SPRITE_FILE, Texture.class);
+
+		assetManager.load(HEALTH_ICON_FILE, Texture.class);
 	}
 
 	@Override
@@ -201,13 +211,17 @@ public class Player extends GameEntity {
 			this.sprite.draw(batch);
 		}
 
-		if (this.sprite == null && assetManager.isLoaded(SPRITE_FILE)) {
-			Texture texture = assetManager.get(SPRITE_FILE, Texture.class);
+		if (this.sprite == null && this.assetManager.isLoaded(SPRITE_FILE)) {
+			Texture texture = this.assetManager.get(SPRITE_FILE, Texture.class);
 			this.sprite = new Sprite(texture);
 			this.sprite.setPosition(0, 0);
 			this.sprite.setSize(texture.getWidth(), texture.getHeight());
 			centerPoint.x = texture.getWidth() / 2;
 			centerPoint.y = texture.getHeight() / 2;
+		}
+
+		if (this.healthTexture == null && this.assetManager.isLoaded(HEALTH_ICON_FILE)) {
+			this.healthTexture = this.assetManager.get(HEALTH_ICON_FILE, Texture.class);
 		}
 	}
 
@@ -233,6 +247,13 @@ public class Player extends GameEntity {
 			shapeRenderer.setColor(Color.WHITE);
 			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 90, 100 * (shootCooldown / SHOOTING_COOLDOWN), 20);
 		}
+
+		if (this.healthTexture != null) {
+			batch.draw(this.healthTexture, 10, 10);
+		}
+		String healthStr = ""+this.health;
+		hudFont.draw(batch, healthStr, 31, Gdx.graphics.getHeight() -25, Color.BLACK);
+		hudFont.draw(batch, healthStr, 30, Gdx.graphics.getHeight() -26, Color.WHITE);
 	}
 
 	public int getLevelFromXP(int xp) {
