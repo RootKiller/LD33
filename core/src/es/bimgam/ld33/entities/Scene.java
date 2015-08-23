@@ -167,7 +167,7 @@ public class Scene {
 	public void tick(float deltaTime) {
 		processing = true;
 		this.world.step(1/60.0f, 6, 2);
-		for (GameEntity entity: this.entities.values()) {
+		for (GameEntity entity : this.entities.values()) {
 			if (! entity.isAlive()) {
 				continue;
 			}
@@ -187,7 +187,7 @@ public class Scene {
 	}
 
 	public void render(SpriteBatch batch) {
-		for (GameEntity entity: this.entities.values()) {
+		for (GameEntity entity : this.entities.values()) {
 			if (! entity.isAlive()) {
 				continue;
 			}
@@ -197,7 +197,7 @@ public class Scene {
 	}
 
 	public void drawHudElements(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
-		for (GameEntity entity: this.entities.values()) {
+		for (GameEntity entity : this.entities.values()) {
 			if (! entity.isAlive()) {
 				continue;
 			}
