@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import es.bimgam.ld33.LD33;
 
+import es.bimgam.ld33.core.Debug;
 import es.bimgam.ld33.entities.*;
 import es.bimgam.ld33.graphics.Font;
 
@@ -33,6 +34,8 @@ public class InGameState extends State {
 	private float timeToSpawnNewEntities = 0.0f;
 
 	public float timeToSpawnNewPickup = 0.0f;
+
+	private boolean devMenu = false;
 
 	private static final int ENEMIES_UPPER_LIMIT = 1000;
 
@@ -68,6 +71,23 @@ public class InGameState extends State {
 		timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
 	}
 
+	private void showDevMenu() {
+		if (devMenu) {
+			return;
+		}
+		devMenu = true;
+		TextButton spawnSoldier = new TextButton("Spawn soldier", this.skin);
+		spawnSoldier.setPosition(10, 300);
+		spawnSoldier.setSize(100, 50);
+		spawnSoldier.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				StateManager.Instance.getActiveStateSafe(InGameState.class).createEnemy(true);
+			}
+		});
+		this.stage.addActor(spawnSoldier);
+	}
+
 	private void spawnPickup() {
 		if (! this.scene.doesEntityExists("Pickup")) {
 			Pickup pickup = this.scene.createEntity("Pickup", Pickup.class);
@@ -99,6 +119,7 @@ public class InGameState extends State {
 		this.hudFont = null;
 		this.hudSpriteBatch.dispose();
 		this.hudSpriteBatch = null;
+		this.stage.clear();
 	}
 
 	@Override
@@ -123,8 +144,86 @@ public class InGameState extends State {
 		this.shapeRenderer.end();
 	}
 
+	private class Cheat {
+		private int[] sequence;
+		private Runnable runnable;
+		private long lastKeyTime = 0;
+		private int progress = 0;
+
+		public Cheat(int[] seq, Runnable run) {
+			this.sequence = seq;
+			this.runnable = run;
+		}
+
+		public void tick() {
+			if (this.sequence == null) {
+				return;
+			}
+
+			final long now = System.currentTimeMillis() / 1000L;
+			final long diff = (now - lastKeyTime);
+			if (diff > 1) {
+				progress = 0;
+			}
+
+			if (Gdx.input.isKeyJustPressed(sequence[progress])) {
+				progress ++;
+				lastKeyTime = now;
+			}
+
+			int sequenceSize = this.sequence.length;
+			if (progress == sequenceSize) {
+				this.runnable.run();
+				this.progress = 0;
+			}
+		}
+	};
+
+	// dev69 - opens development menu
+	private Cheat devMenuCheat = new Cheat(new int[]{Input.Keys.D, Input.Keys.E, Input.Keys.V, Input.Keys.NUM_6, Input.Keys.NUM_9}, new Runnable() {
+		@Override
+		public void run() {
+			StateManager.Instance.getActiveStateSafe(InGameState.class).showDevMenu();
+		}
+	});
+
+	// iamgod - adds 2000xp
+	private Cheat iAmGodCheat = new Cheat(new int[]{Input.Keys.I, Input.Keys.A, Input.Keys.M, Input.Keys.G, Input.Keys.O, Input.Keys.D}, new Runnable() {
+		@Override
+		public void run() {
+			StateManager.Instance.getActiveStateSafe(InGameState.class).player.addXP(2000);
+		}
+	});
+
+	// medicine - adds 1 hp
+	private Cheat medicineCheat = new Cheat(new int[]{Input.Keys.M, Input.Keys.E, Input.Keys.D, Input.Keys.I, Input.Keys.C, Input.Keys.I, Input.Keys.N, Input.Keys.E}, new Runnable() {
+		@Override
+		public void run() {
+			StateManager.Instance.getActiveStateSafe(InGameState.class).player.addHealth(1);
+		}
+	});
+
+	// icecold - adds freezer with 10bullets (if already in eq adds 10 bullets)
+	private Cheat iceColdCheat = new Cheat(new int[]{Input.Keys.I, Input.Keys.C, Input.Keys.E, Input.Keys.C, Input.Keys.O, Input.Keys.L, Input.Keys.D}, new Runnable() {
+		@Override
+		public void run() {
+			StateManager.Instance.getActiveStateSafe(InGameState.class).player.addWeapon(FreezingBullet.class, 10);
+		}
+	});
+
+	private void processSuperSecretStuff() {
+		if (Debug.ALLOW_CHEATS) {
+			devMenuCheat.tick();
+			iAmGodCheat.tick();
+			medicineCheat.tick();
+			iceColdCheat.tick();
+		}
+	}
+
 	@Override
 	public void tick(float deltaTime) {
+		processSuperSecretStuff(); // cheater!
+
 		this.scene.tick(deltaTime);
 
 		timeToSpawnNewPickup -= deltaTime;
