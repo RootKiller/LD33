@@ -18,6 +18,8 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import es.bimgam.ld33.core.Debug;
 import es.bimgam.ld33.graphics.Font;
+import es.bimgam.ld33.states.InGameState;
+import es.bimgam.ld33.states.StateManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -318,6 +320,18 @@ public class Player extends GameEntity {
 
 	@Override
 	public void onCollisionEnter(GameEntity entity) {
+		if (entity.getTypeName() == "Bullet") {
+			this.health -= ((Bullet) entity).getDamage();
+			if (this.health <= 0) {
+				this.deadSound.play();
+				StateManager.Instance.getActiveStateSafe(InGameState.class).gameOver(this.killedCivs + this.killedSoldiers, this.xp, this.level);
+			}
+			else {
+				this.hitSound.play();
+			}
+			this.scene.destroyEntity(entity);
+		}
+
 		if (entity.getTypeName() == "Pickup") {
 			Pickup pickup = (Pickup) entity;
 			switch (pickup.getKind()) {
