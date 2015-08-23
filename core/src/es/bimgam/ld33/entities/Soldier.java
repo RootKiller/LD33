@@ -213,7 +213,7 @@ public class Soldier extends Enemy {
 			if (this.health <= 0) {
 				this.scene.destroyEntity(this);
 				this.player.addXP(3);
-				this.player.killedEnemies ++;
+				this.player.killedSoldiers ++;
 			}
 			this.scene.destroyEntity(entity);
 			return;

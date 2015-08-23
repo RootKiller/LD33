@@ -40,7 +40,9 @@ public class Player extends GameEntity {
 
 	private int bulletCounter;
 
-	public int killedEnemies;
+	public int killedSoldiers;
+	public int killedCivs;
+	public int hitsCount;
 
 	private Vector2 centerPoint = new Vector2();
 
@@ -293,7 +295,7 @@ public class Player extends GameEntity {
 		bullet.physicalBody.setLinearVelocity(vel);
 
 		this.shootSound.play();
-		shootCooldown = SHOOTING_COOLDOWN - (SHOOTING_BONUS_FOR_KILLS * this.killedEnemies);
+		shootCooldown = SHOOTING_COOLDOWN - (SHOOTING_BONUS_FOR_KILLS * (this.killedCivs + this.killedSoldiers));
 
 		if (weaponInfo.ammo != -1) {
 			-- weaponInfo.ammo;
@@ -305,6 +307,7 @@ public class Player extends GameEntity {
 	}
 
 	public void onHitEnemy(Enemy enemy) {
+		hitsCount ++;
 		if (enemy.getHealth() > 0) {
 			this.hitSound.play();
 		}
