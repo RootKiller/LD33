@@ -360,4 +360,8 @@ public class Player extends GameEntity {
 			}
 		}
 	}
+
+	public void addHealth(int hp) {
+		this.health += hp;
+	}
 }
