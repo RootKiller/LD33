@@ -105,6 +105,7 @@ public class Player extends GameEntity {
 
 		this.shootSound.dispose();
 		this.hitSound.dispose();
+		this.deadSound.dispose();
 		if (this.healthTexture != null) {
 			this.healthTexture.dispose();
 		}
