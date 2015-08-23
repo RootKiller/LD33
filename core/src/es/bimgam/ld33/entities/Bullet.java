@@ -17,11 +17,10 @@ public class Bullet extends GameEntity {
 
 	static private final String SPRITE_FILE = "entities/sprites/BULLET/bullet.png";
 
-	private CircleShape circleShape;
 	private AssetManager assetManager;
 
 	private float lifeTime;
-	private Vector2 centerPoint = new Vector2();
+	protected Vector2 centerPoint = new Vector2();
 
 	private int damage;
 
@@ -48,7 +47,7 @@ public class Bullet extends GameEntity {
 		this.physicalBody = world.createBody(def);
 		this.physicalBody.setUserData(this);
 
-		circleShape = new CircleShape();
+		CircleShape circleShape = new CircleShape();
 		circleShape.setRadius(4.0f);
 
 		FixtureDef fixtureDef = new FixtureDef();
@@ -102,14 +101,6 @@ public class Bullet extends GameEntity {
 			centerPoint.x = texture.getWidth() / 2;
 			centerPoint.y = texture.getHeight() / 2;
 		}
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		if (this.physicalBody != null) {
-			return this.physicalBody.getPosition();
-		}
-		return Vector2.Zero;
 	}
 
 	public int getDamage() {

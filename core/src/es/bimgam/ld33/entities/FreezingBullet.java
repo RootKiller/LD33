@@ -17,7 +17,6 @@ public class FreezingBullet extends Bullet {
 	public final static float FREEZEE_COOLDOWN = 5.0f;
 
 	private AssetManager assetManager;
-	private Vector2 centerPoint = new Vector2();
 
 	public FreezingBullet(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
