@@ -2,6 +2,7 @@ package es.bimgam.ld33.states;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import es.bimgam.ld33.core.Debug;
 
 import java.util.HashMap;
 
@@ -14,6 +15,15 @@ public class StateManager {
 
 	private Stage stage;
 	private Skin skin;
+
+	private class PendingStateChange {
+		public State newState;
+
+		public PendingStateChange(State state) {
+			this.newState = state;
+		}
+	}
+	private PendingStateChange pendingStateChange;
 
 	public StateManager(Stage stage, Skin skin) {
 		Instance = this;
@@ -44,45 +54,57 @@ public class StateManager {
 		this.states.put(tempState.getName(), stateClass);
 	}
 
-	public boolean setActiveState(Class<? extends  State> stateClass) {
-		if (! this.states.containsValue(stateClass)) {
+	public boolean setActiveState(String stateName) {
+		if (this.pendingStateChange != null) {
+			Debug.Log("State change in this moment is not possible");
 			return false;
 		}
 
-		if (this.activeState != null) {
-			this.activeState.deactivate();
-		}
-		try {
-			this.activeState = stateClass.getConstructor(StateManager.class, Stage.class, Skin.class).newInstance(this, stage, skin);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (this.activeState != null) {
-			this.activeState.activate();
-		}
-		return true;
-	}
-
-	public boolean setActiveState(String stateName) {
 		if (! this.states.containsKey(stateName)) {
 			return false;
 		}
 
-		if (this.activeState != null) {
-			this.activeState.deactivate();
-		}
 		try {
-			this.activeState = this.states.get(stateName).getConstructor(StateManager.class, Stage.class, Skin.class).newInstance(this, stage, skin);
+			State newState = this.states.get(stateName).getConstructor(StateManager.class, Stage.class, Skin.class).newInstance(this, stage, skin);
+			this.pendingStateChange = new PendingStateChange(newState);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (this.activeState != null) {
-			this.activeState.activate();
+		return true;
+	}
+
+	public boolean setActiveState(String stateName, HashMap<String, Object> params) {
+		if (this.pendingStateChange != null) {
+			Debug.Log("State change in this moment is not possible");
+			return false;
+		}
+
+		if (! this.states.containsKey(stateName)) {
+			return false;
+		}
+
+		try {
+			State newState = this.states.get(stateName).getConstructor(StateManager.class, Stage.class, Skin.class).newInstance(this, stage, skin);
+			newState.setParams(params);
+			this.pendingStateChange = new PendingStateChange(newState);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return true;
 	}
 
 	public void tick(float deltaTime) {
+		if (this.pendingStateChange != null) {
+			if (this.activeState != null) {
+				this.activeState.deactivate();
+			}
+			this.activeState = this.pendingStateChange.newState;
+			this.pendingStateChange = null;
+			if (this.activeState != null) {
+				this.activeState.activate();
+			}
+		}
+
 		if (this.activeState != null) {
 			this.activeState.tick(deltaTime);
 		}
