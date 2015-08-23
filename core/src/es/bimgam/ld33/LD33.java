@@ -16,6 +16,7 @@ import es.bimgam.ld33.input.BindPool;
 
 import es.bimgam.ld33.core.CommandManager;
 
+import es.bimgam.ld33.states.GameOverState;
 import es.bimgam.ld33.states.InGameState;
 import es.bimgam.ld33.states.MenuState;
 
@@ -114,5 +115,6 @@ public class LD33 extends ApplicationAdapter {
 	private void registerStates() {
 		this.stateManager.register(MenuState.class);
 		this.stateManager.register(InGameState.class);
+		this.stateManager.register(GameOverState.class);
 	}
 }
