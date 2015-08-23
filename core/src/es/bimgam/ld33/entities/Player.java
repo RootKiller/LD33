@@ -105,7 +105,7 @@ public class Player extends GameEntity {
 		fixtureDef.friction = 1.0f;
 		fixtureDef.restitution = 0.0f;
 		fixtureDef.filter.categoryBits = CollisionMasks.PLAYER;
-		fixtureDef.filter.maskBits = CollisionMasks.ENEMY;
+		fixtureDef.filter.maskBits = CollisionMasks.PICKUP | CollisionMasks.ENEMY;
 
 		this.physicalBody.createFixture(fixtureDef);
 		circleShape.dispose();
