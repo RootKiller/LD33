@@ -36,6 +36,8 @@ public class InGameState extends State {
 	private int enemyCounter = 0;
 	private float timeToSpawnNewEntities = 0.0f;
 
+	private static final int ENEMIES_UPPER_LIMIT = 1000;
+
 	public InGameState(StateManager stateManager, Stage stage, Skin skin) {
 		super(stateManager, stage, skin);
 	}
@@ -117,8 +119,16 @@ public class InGameState extends State {
 
 		timeToSpawnNewEntities -= deltaTime;
 		if (timeToSpawnNewEntities <= 0.0f) {
-			for (int i = 0; i < 20 + (int)(Math.random() * 100.0); ++i) {
-				createEnemy();
+			int enemiesOnScene = this.scene.countAliveEntitiesByClass(Enemy.class);
+			if (enemiesOnScene < ENEMIES_UPPER_LIMIT) {
+				int count = 20 + (int) (Math.random() * 100.0);
+				if ((enemiesOnScene + count) > ENEMIES_UPPER_LIMIT) {
+					count = (ENEMIES_UPPER_LIMIT - enemiesOnScene);
+				}
+
+				for (int i = 0; i < count; ++i) {
+					createEnemy();
+				}
 			}
 			timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
 		}
