@@ -8,18 +8,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import es.bimgam.ld33.LD33;
 
 import es.bimgam.ld33.entities.Enemy;
+import es.bimgam.ld33.entities.Pickup;
 import es.bimgam.ld33.entities.Scene;
 import es.bimgam.ld33.entities.Player;
 import es.bimgam.ld33.graphics.Font;
-
-import java.util.ArrayList;
 
 public class InGameState extends State {
 	private OrthographicCamera orthoCamera;
@@ -36,6 +35,8 @@ public class InGameState extends State {
 	private int enemyCounter = 0;
 	private float timeToSpawnNewEntities = 0.0f;
 
+	public float timeToSpawnNewPickup = 0.0f;
+
 	private static final int ENEMIES_UPPER_LIMIT = 1000;
 
 	public InGameState(StateManager stateManager, Stage stage, Skin skin) {
@@ -45,7 +46,6 @@ public class InGameState extends State {
 	public String getName() {
 		return "InGameState";
 	}
-
 
 	@Override
 	public void activate() {
@@ -69,6 +69,19 @@ public class InGameState extends State {
 			createEnemy();
 		}
 		timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
+	}
+
+	private void spawnPickup() {
+		if (! this.scene.doesEntityExists("Pickup")) {
+			Pickup pickup = this.scene.createEntity("Pickup", Pickup.class);
+			if (Math.random() > 0.5f) {
+				pickup.setup(Pickup.PickupKind.FREEZER, 5);
+			}
+			else {
+				pickup.setup(Pickup.PickupKind.HEALTH, 1);
+			}
+			pickup.setPosition(new Vector2(-200.0f + (float) Math.random() * 200.0f, -200.0f + (float) Math.random() * 200.0f));
+		}
 	}
 
 	private void createEnemy() {
@@ -116,6 +129,12 @@ public class InGameState extends State {
 	@Override
 	public void tick(float deltaTime) {
 		this.scene.tick(deltaTime);
+
+		timeToSpawnNewPickup -= deltaTime;
+		if (timeToSpawnNewPickup <= 0.0f) {
+			spawnPickup();
+			timeToSpawnNewPickup = 10.0f + (float)Math.random() * 50.0f;
+		}
 
 		timeToSpawnNewEntities -= deltaTime;
 		if (timeToSpawnNewEntities <= 0.0f) {
