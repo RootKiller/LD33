@@ -46,6 +46,7 @@ public class Player extends GameEntity {
 
 	private Sound shootSound;
 	private Sound hitSound;
+	private Sound deadSound;
 
 	private class WeaponInfo {
 		Class<? extends Bullet> bullet;
@@ -79,6 +80,7 @@ public class Player extends GameEntity {
 		this.shootCooldown = 0.0f;
 		this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sound/shoot.ogg"));
 		this.hitSound = Gdx.audio.newSound(Gdx.files.internal("sound/hit.ogg"));
+		this.deadSound = Gdx.audio.newSound(Gdx.files.internal("sound/dead.ogg"));
 
 		this.xp = 0;
 		this.level = 1;
@@ -282,7 +284,12 @@ public class Player extends GameEntity {
 	}
 
 	public void onHitEnemy(Enemy enemy) {
-		this.hitSound.play();
+		if (enemy.getHealth() > 0) {
+			this.hitSound.play();
+		}
+		else {
+			this.deadSound.play();
+		}
 	}
 
 	@Override

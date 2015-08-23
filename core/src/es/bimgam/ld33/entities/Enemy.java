@@ -228,4 +228,8 @@ public class Enemy extends GameEntity {
 		shapeRenderer.setColor(color);
 		shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * alpha, 6);
 	}
+
+	public int getHealth() {
+		return this.health;
+	}
 }
