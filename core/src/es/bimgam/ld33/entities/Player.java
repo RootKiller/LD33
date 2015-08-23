@@ -378,6 +378,19 @@ public class Player extends GameEntity {
 		}
 	}
 
+	public int getWantedLevel() {
+		if (this.killedSoldiers > 0) {
+			return 3;
+		}
+		if (this.killedCivs > 0) {
+			return 2;
+		}
+		if (this.hitsCount > 0) {
+			return 1;
+		}
+		return 0;
+	}
+
 	public void addHealth(int hp) {
 		this.health += hp;
 	}
