@@ -78,7 +78,7 @@ public class Enemy extends GameEntity {
 		fixtureDef.friction = 1.0f;
 		fixtureDef.restitution = 0.8f;
 		fixtureDef.filter.categoryBits = CollisionMasks.ENEMY;
-		fixtureDef.filter.maskBits = CollisionMasks.BULLET | CollisionMasks.PLAYER;
+		fixtureDef.filter.maskBits = CollisionMasks.BULLET | CollisionMasks.PLAYER |  CollisionMasks.ENEMY;
 
 		this.physicalBody.createFixture(fixtureDef);
 	}
