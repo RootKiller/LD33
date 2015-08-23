@@ -84,6 +84,10 @@ public class Soldier extends Enemy {
 	private void ai_updateShooting(float deltaTime) {
 		this.shootCooldown -= deltaTime;
 		if (this.shootCooldown <= 0.0f) {
+			if (this.player.getWantedLevel() == 0) {
+				return;
+			}
+
 			Vector2 playerPos = this.player.getPosition();
 			Vector2 myPos = getPosition();
 
@@ -118,8 +122,17 @@ public class Soldier extends Enemy {
 		timeToChangeTask -= deltaTime;
 
 		if (timeToChangeTask <= 0.0f) {
+			Vector2 playerPos = this.player.getPosition();
+			Vector2 myPos = getPosition();
+			Vector2 direction = playerPos.sub(myPos).nor();
+
 			final float MOVEMENT_SPEED = 15.0f;
-			this.physicalBody.setLinearVelocity(new Vector2((float)(-1.0f + Math.random() * 2.0f) * MOVEMENT_SPEED, (float)(-1.0f + Math.random() * 2.0f) * MOVEMENT_SPEED));
+			if (this.player.getWantedLevel() > 0) {
+				this.physicalBody.setLinearVelocity((float)(direction.x * Math.random()) * MOVEMENT_SPEED, (float)(direction.y * Math.random()) * MOVEMENT_SPEED);
+			}
+			else {
+				this.physicalBody.setLinearVelocity((float)(-1.0f + Math.random() * 2.0f) * MOVEMENT_SPEED, (float)(-1.0f + Math.random() * 2.0f) * MOVEMENT_SPEED);
+			}
 
 			timeToChangeTask = AI_TIME_TO_CHANGE_TASK;
 		}
