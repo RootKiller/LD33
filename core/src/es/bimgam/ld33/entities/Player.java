@@ -285,6 +285,22 @@ public class Player extends GameEntity {
 		this.hitSound.play();
 	}
 
+	@Override
+	public void onCollisionEnter(GameEntity entity) {
+		if (entity.getTypeName() == "Pickup") {
+			Pickup pickup = (Pickup) entity;
+			switch (pickup.getKind()) {
+			case HEALTH:
+				this.health += pickup.getValue();
+				break;
+			case FREEZER:
+				this.addWeapon(FreezingBullet.class, pickup.getValue());
+				break;
+			}
+			pickup.onPickup(this);
+		}
+	}
+
 	private void nextWeapon() {
 		this.currentWeapon = (this.currentWeapon + 1) % this.weapons.size();
 	}
