@@ -30,8 +30,6 @@ public class Player extends GameEntity {
 	static private final float SHOOTING_BONUS_FOR_KILLS = 0.00001f;
 
 	private AssetManager assetManager;
-	private World physicalWorld;
-	private CircleShape circleShape;
 
 	private boolean wasFireButtonPressed;
 
@@ -80,7 +78,6 @@ public class Player extends GameEntity {
 
 		this.shootSound.dispose();
 		this.hitSound.dispose();
-		this.circleShape.dispose();
 	}
 
 	@Override
@@ -90,17 +87,15 @@ public class Player extends GameEntity {
 
 	@Override
 	public void setupPhysics(World world) {
-		this.physicalWorld = world;
-
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.KinematicBody;
 		def.position.set(0, 0);
 		def.fixedRotation = true;
 
-		this.physicalBody = this.physicalWorld.createBody(def);
+		this.physicalBody = world.createBody(def);
 		this.physicalBody.setUserData(this);
 
-		circleShape = new CircleShape();
+		CircleShape circleShape = new CircleShape();
 		circleShape.setRadius(13.0f);
 
 		FixtureDef fixtureDef = new FixtureDef();

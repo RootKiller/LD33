@@ -26,9 +26,6 @@ public class Enemy extends GameEntity {
 	private final static float AI_MINIMAL_DIST_DO_PLAYER = 60.0f;
 
 	private AssetManager assetManager;
-	private World physicalWorld;
-
-	private CircleShape circleShape;
 
 	private Player player;
 
@@ -59,17 +56,15 @@ public class Enemy extends GameEntity {
 
 	@Override
 	public void setupPhysics(World world) {
-		physicalWorld = world;
-
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;
 		def.position.set(-1000.0f + (float)Math.random() * 2000.0f, -1000.0f + (float)Math.random() * 2000.0f);
 		def.fixedRotation = true;
 
-		this.physicalBody = this.physicalWorld.createBody(def);
+		this.physicalBody = world.createBody(def);
 		this.physicalBody.setUserData(this);
 
-		circleShape = new CircleShape();
+		CircleShape circleShape = new CircleShape();
 		circleShape.setRadius(10.0f);
 
 		FixtureDef fixtureDef = new FixtureDef();
@@ -81,6 +76,7 @@ public class Enemy extends GameEntity {
 		fixtureDef.filter.maskBits = CollisionMasks.BULLET | CollisionMasks.PLAYER |  CollisionMasks.ENEMY;
 
 		this.physicalBody.createFixture(fixtureDef);
+		circleShape.dispose();
 	}
 
 	private void ai_doWork(float deltaTime) {
