@@ -250,7 +250,11 @@ public class InGameState extends State {
 		}
 	}
 
-	@Override
-	public void resize(int width, int height) {
+	public void gameOver(int killedEntities, int xp, int level) {
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		params.put("KilledEnemies", killedEntities);
+		params.put("XP", xp);
+		params.put("Level", level);
+		this.manager.setActiveState("GameOverState", params);
 	}
 }
