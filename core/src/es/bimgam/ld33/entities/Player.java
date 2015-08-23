@@ -88,9 +88,10 @@ public class Player extends GameEntity {
 	@Override
 	public void setupPhysics(World world) {
 		BodyDef def = new BodyDef();
-		def.type = BodyDef.BodyType.KinematicBody;
+		def.type = BodyDef.BodyType.DynamicBody;
 		def.position.set(0, 0);
 		def.fixedRotation = true;
+		def.gravityScale = 0.0f;
 
 		this.physicalBody = world.createBody(def);
 		this.physicalBody.setUserData(this);
@@ -154,9 +155,7 @@ public class Player extends GameEntity {
 			fire();
 		}
 
-		if (velocity.len() > 0.0f) {
-			this.physicalBody.setTransform(this.physicalBody.getPosition().add(velocity), this.physicalBody.getAngle());
-		}
+		this.physicalBody.setLinearVelocity(velocity.x * 500.0f, velocity.y * 500.0f);
 	}
 
 	@Override
@@ -169,9 +168,9 @@ public class Player extends GameEntity {
 		}
 
 		if (this.physicalBody != null) {
-			final float alpha = MathUtils.clamp(10.0f * deltaTime, 0.0f, 1.0f);
+			final float alpha = MathUtils.clamp(100.0f * deltaTime, 0.0f, 1.0f);
 			velocity.lerp(Vector2.Zero, alpha);
-			velocity.interpolate(Vector2.Zero, alpha, Interpolation.sine);
+			// velocity.interpolate(Vector2.Zero, alpha, Interpolation.sine);
 		}
 
 		this.shootCooldown -= deltaTime;
