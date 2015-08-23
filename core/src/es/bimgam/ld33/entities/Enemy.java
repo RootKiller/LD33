@@ -1,9 +1,6 @@
 package es.bimgam.ld33.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,7 +9,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
-import es.bimgam.ld33.core.Debug;
 import es.bimgam.ld33.graphics.Font;
 
 public class Enemy extends GameEntity {
@@ -23,7 +19,8 @@ public class Enemy extends GameEntity {
 
 	static private final float HEALTH_REGENERATION = 4.0f;
 
-	private final static float AI_MINIMAL_DIST_DO_PLAYER = 60.0f;
+	private final static float AI_MINIMAL_DIST_DO_PLAYER = 100.0f;
+	private final static float AI_TIME_TO_CHANGE_TASK = 5.0f;
 
 	private AssetManager assetManager;
 
@@ -99,7 +96,7 @@ public class Enemy extends GameEntity {
 				this.physicalBody.setLinearVelocity(new Vector2((float)(-1.0f + Math.random() * 2.0f) * MOVEMENT_SPEED, (float)(-1.0f + Math.random() * 2.0f) * MOVEMENT_SPEED));
 			}
 
-			timeToChangeTask = (float) Math.random() * 10.0f;
+			timeToChangeTask = AI_TIME_TO_CHANGE_TASK;
 		}
 	}
 
@@ -111,7 +108,7 @@ public class Enemy extends GameEntity {
 		final float MOVEMENT_SPEED = 35.0f;
 		this.physicalBody.setLinearVelocity(-direction.x * MOVEMENT_SPEED, -direction.y * MOVEMENT_SPEED);
 
-		timeToChangeTask = (float) Math.random() * 10.0f;
+		timeToChangeTask = AI_TIME_TO_CHANGE_TASK;
 	}
 
 	@Override
