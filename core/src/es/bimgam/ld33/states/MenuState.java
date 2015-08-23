@@ -71,6 +71,24 @@ public class MenuState extends State {
 				Gdx.app.exit();
 			}
 		});
+
+		if (Debug.TEST_UI_MENU) {
+			TextButton test = new TextButton("Test", this.skin);
+			test.setSize(300, 50);
+			test.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 - 130.0f);
+			this.stage.addActor(test);
+
+			test.addListener(new ClickListener() {
+				public void clicked (InputEvent event, float x, float y) {
+
+					HashMap<String, Object> params = new HashMap<String, Object>();
+					params.put("KilledEnemies", 69);
+					params.put("XP", 6669);
+					params.put("Level", 616);
+					StateManager.Instance.setActiveState("GameOverState", params);
+				}
+			});
+		}
 	}
 
 	@Override
