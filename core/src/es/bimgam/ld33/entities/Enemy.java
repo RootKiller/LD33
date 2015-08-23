@@ -182,6 +182,9 @@ public class Enemy extends GameEntity {
 			screen.x -= 50.0f;
 			shapeRenderer.setColor(Color.BLACK);
 			shapeRenderer.rect(screen.x, screen.y, 100, 10);
+			Color col = new Color(Color.RED.r * 0.75f, Color.RED.g* 0.75f, Color.RED.b* 0.75f, 1.0f);
+			shapeRenderer.setColor(col);
+			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f, 6);
 			shapeRenderer.setColor(Color.RED);
 			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * ((float)this.health / MAX_HEALTH), 6);
 		}
@@ -193,6 +196,9 @@ public class Enemy extends GameEntity {
 			screen.x -= 50.0f;
 			shapeRenderer.setColor(Color.BLACK);
 			shapeRenderer.rect(screen.x, screen.y, 100, 10);
+			Color col = new Color(Color.BLUE.r* 0.75f, Color.BLUE.g* 0.75f, Color.BLUE.b* 0.75f, 1.0f);
+			shapeRenderer.setColor(col);
+			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f, 6);
 			shapeRenderer.setColor(Color.BLUE);
 			shapeRenderer.rect(screen.x + 2.0f, screen.y + 2.0f, 96.0f * (this.freezeCooldown / FreezingBullet.FREEZEE_COOLDOWN), 6);
 		}
