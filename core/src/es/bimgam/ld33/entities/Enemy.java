@@ -40,7 +40,6 @@ public class Enemy extends GameEntity {
 		super(scene, physicalWorld, assetManager);
 
 		this.timeToChangeTask = 0.0f;
-		this.player = scene.find("Player");
 
 		this.health = MAX_HEALTH;
 		this.freezeCooldown = 0.0f;
@@ -53,9 +52,12 @@ public class Enemy extends GameEntity {
 
 	@Override
 	public void setupPhysics(World world) {
+		this.player = scene.find("Player");
+		Vector2 playerPos = this.player.getPosition();
+
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;
-		def.position.set(-1000.0f + (float)Math.random() * 2000.0f, -1000.0f + (float)Math.random() * 2000.0f);
+		def.position.set(playerPos.x + (-500.0f + (float)Math.random() * 1000.0f), playerPos.y + (-500.0f + (float)Math.random() * 1000.0f));
 		def.fixedRotation = true;
 
 		this.physicalBody = world.createBody(def);
