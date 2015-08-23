@@ -2,6 +2,7 @@ package es.bimgam.ld33.states;
 
 import com.badlogic.gdx.Gdx;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -9,14 +10,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import es.bimgam.ld33.LD33;
 
 import es.bimgam.ld33.core.Debug;
 import es.bimgam.ld33.entities.*;
 import es.bimgam.ld33.graphics.Font;
+
+import java.util.HashMap;
 
 public class InGameState extends State {
 	private OrthographicCamera orthoCamera;
@@ -102,7 +108,8 @@ public class InGameState extends State {
 	}
 
 	private void createEnemy(boolean soldier) {
-		this.scene.createEntity("Enemy " + this.enemyCounter, soldier ? Soldier.class : Enemy.class);
+		Class<? extends Enemy> enemyClass = soldier ? Soldier.class : Enemy.class;
+		this.scene.createEntity("Enemy " + this.enemyCounter, enemyClass);
 		this.enemyCounter ++;
 	}
 
@@ -241,7 +248,7 @@ public class InGameState extends State {
 					count = (ENEMIES_UPPER_LIMIT - enemiesOnScene);
 				}
 
-				int soldiers = (int) (count * 0.05f);
+				int soldiers = (int) (count * (0.05f + (this.player.getWantedLevel() * 0.05f)));
 				for (int i = 0; i < count; ++i) {
 					createEnemy((i <= soldiers));
 				}
