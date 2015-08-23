@@ -12,7 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import es.bimgam.ld33.LD33;
+import es.bimgam.ld33.core.Debug;
 import es.bimgam.ld33.graphics.Font;
+
+import java.util.HashMap;
 
 public class MenuState extends State {
 
@@ -52,8 +55,20 @@ public class MenuState extends State {
 		this.stage.addActor(newGame);
 
 		newGame.addListener(new ClickListener() {
-			public void clicked (InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				StateManager.Instance.setActiveState("InGameState");
+			}
+		});
+
+
+		TextButton quitGame = new TextButton("Quit game", this.skin);
+		quitGame.setSize(300, 50);
+		quitGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 - 60.0f);
+		this.stage.addActor(quitGame);
+
+		quitGame.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				Gdx.app.exit();
 			}
 		});
 	}
