@@ -167,8 +167,7 @@ public class Scene {
 	public void tick(float deltaTime) {
 		processing = true;
 		this.world.step(1/60.0f, 6, 2);
-		for (Map.Entry<String, GameEntity> pair : this.entities.entrySet()) {
-			GameEntity entity = pair.getValue();
+		for (GameEntity entity: this.entities.values()) {
 			if (! entity.isAlive()) {
 				continue;
 			}
@@ -188,8 +187,7 @@ public class Scene {
 	}
 
 	public void render(SpriteBatch batch) {
-		for (Map.Entry<String, GameEntity> pair : this.entities.entrySet()) {
-			GameEntity entity = pair.getValue();
+		for (GameEntity entity: this.entities.values()) {
 			if (! entity.isAlive()) {
 				continue;
 			}
@@ -199,13 +197,27 @@ public class Scene {
 	}
 
 	public void drawHudElements(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
-		for (Map.Entry<String, GameEntity> pair : this.entities.entrySet()) {
-			GameEntity entity = pair.getValue();
+		for (GameEntity entity: this.entities.values()) {
 			if (! entity.isAlive()) {
 				continue;
 			}
 
 			entity.drawHudElement(shapeRenderer, batch, hudFont);
 		}
+	}
+
+	public int countAliveEntitiesByClass(Class<? extends GameEntity> lookupClass) {
+		int count = 0;
+		for (Map.Entry<String, GameEntity> pair : this.entities.entrySet()) {
+			GameEntity entity = pair.getValue();
+			if (! entity.isAlive()) {
+				continue;
+			}
+
+			if (entity.getClass() == lookupClass) {
+				count ++;
+			}
+		}
+		return count;
 	}
 }
