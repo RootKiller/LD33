@@ -10,12 +10,19 @@ public class Debug {
 	}
 
 	public static void Log(Object object) {
-		System.out.println("[debug] " + object.toString());
+		Log(object.toString());
 	}
 
 	public static void Assert(boolean condition, String message) {
 		if (! condition) {
 			Log("[assert] " + message);
+			try {
+				throw new Exception("Assert occured!");
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			System.exit(1031997);
 		}
 	}
 }
