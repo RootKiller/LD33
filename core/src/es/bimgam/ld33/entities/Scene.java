@@ -144,6 +144,8 @@ public class Scene {
 	}
 
 	public <T extends GameEntity> T createEntity(String name, Class<T> entityClass) {
+		Debug.Assert(! this.entities.containsKey(name), "Entity name has to be unique! (" + name + ")");
+
 		T entity = null;
 		try {
 			Constructor<T> ctor = entityClass.getConstructor(Scene.class, World.class, AssetManager.class);
