@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
@@ -245,6 +244,7 @@ public class Player extends GameEntity {
 	public void drawHudElement(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
 		if (this.levelUpLabel > 0.0f) {
 			final float width = hudFont.getRenderWidth("Level "+this.level+"!");
+			hudFont.draw(batch, "Level " + this.level + "!", (Gdx.graphics.getWidth() / 2 - width / 2) + 1, (Gdx.graphics.getHeight() / 2 - 100.0f) + 1, Color.BLACK);
 			hudFont.draw(batch, "Level " + this.level + "!", Gdx.graphics.getWidth() / 2 - width / 2, Gdx.graphics.getHeight() / 2 - 100.0f, Color.YELLOW);
 		}
 
@@ -252,13 +252,16 @@ public class Player extends GameEntity {
 		try {
 			WeaponInfo currentWeaponInfo = this.weapons.get(this.currentWeapon);
 			weaponNameField = currentWeaponInfo.bullet.getField("WEAPON_NAME");
-			hudFont.draw(batch, "Current weapon: " + weaponNameField.get(null) + " (" + ((currentWeaponInfo.ammo == -1) ? "INF" : currentWeaponInfo.ammo) + ")", 10, 10, Color.BLACK);
+			hudFont.draw(batch, "Current weapon: " + weaponNameField.get(null) + " (" + ((currentWeaponInfo.ammo == -1) ? "INF" : currentWeaponInfo.ammo) + ")", 11, 11, Color.BLACK);
+			hudFont.draw(batch, "Current weapon: " + weaponNameField.get(null) + " (" + ((currentWeaponInfo.ammo == -1) ? "INF" : currentWeaponInfo.ammo) + ")", 10, 10, Color.WHITE);
 		} catch(Exception e) {
 		}
-		hudFont.draw(batch, "XP: " + xp + " Level: " + level, 10, 50, Color.BLACK);
+		hudFont.draw(batch, "XP: " + xp + " Level: " + level, 11, 51, Color.BLACK);
+		hudFont.draw(batch, "XP: " + xp + " Level: " + level, 10, 50, Color.WHITE);
 		float y = 90;
 		if (this.activeBoost != null) {
-			hudFont.draw(batch, "Boost: " + this.activeBoost.name() + " - " + ((Integer)((int)this.timeToChangeBoost)).toString() + "s", 10, y, Color.BLACK);
+			hudFont.draw(batch, "Boost: " + this.activeBoost.name() + " - " + ((Integer)((int)this.timeToChangeBoost)).toString() + "s", 11, y + 1, Color.BLACK);
+			hudFont.draw(batch, "Boost: " + this.activeBoost.name() + " - " + ((Integer)((int)this.timeToChangeBoost)).toString() + "s", 10, y, Color.WHITE);
 			y += 50.0f;
 		}
 
