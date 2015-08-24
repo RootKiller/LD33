@@ -31,6 +31,15 @@ public class Player extends GameEntity {
 
 	static private final String HEALTH_ICON_FILE = "interface/icons/health.png";
 
+	static private final String HELP_TEXT = "Welcome to The Spidernator!\n" +
+		"The goal of the game is to kill as much enemies as you can. There is no time limit, you just gain more and more XP." +
+		"\n"+
+		"To move forward use [W], backward [S], to strafe to the left use [A] and to the right use [D].\n" +
+		"To switch between weapons use [Q] and [E]\n" +
+		"To shoot click [LMB] (Left mouse button).\n" +
+		"To show this message again press [H]\n" +
+		"Have fun!";
+
 	static private final float SHOOTING_COOLDOWN = 0.8f;
 
 	static private final float SHOOTING_BONUS_FOR_KILLS = 0.00001f;
@@ -86,6 +95,10 @@ public class Player extends GameEntity {
 	private Boost activeBoost = null;
 	private float timeToChangeBoost = 0.0f;
 
+	private float timeToHideHelp;
+
+	private float helpTextWidth = 0.0f;
+
 	public Player(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
 
@@ -105,6 +118,7 @@ public class Player extends GameEntity {
 		this.levelUpLabel = 0.0f;
 
 		this.health = STARTUP_HEALTH;
+		this.timeToHideHelp = 10.0f;
 	}
 
 	@Override
@@ -189,6 +203,10 @@ public class Player extends GameEntity {
 			previousWeapon();
 		}
 
+		if (Gdx.input.isKeyJustPressed(Input.Keys.H) && this.timeToHideHelp < 0.0f) {
+			this.timeToHideHelp = 10.0f;
+		}
+
 		final boolean isFireButtonPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
 		final boolean fire = (isFireButtonPressed && (! wasFireButtonPressed));
 		wasFireButtonPressed = isFireButtonPressed;
@@ -218,6 +236,7 @@ public class Player extends GameEntity {
 
 		this.shootCooldown -= deltaTime;
 		this.levelUpLabel -= deltaTime;
+		this.timeToHideHelp -= deltaTime;
 	}
 
 	@Override
@@ -238,6 +257,18 @@ public class Player extends GameEntity {
 		if (this.healthTexture == null && this.assetManager.isLoaded(HEALTH_ICON_FILE)) {
 			this.healthTexture = this.assetManager.get(HEALTH_ICON_FILE, Texture.class);
 		}
+	}
+
+	private void drawHelp(ShapeRenderer shapeRenderer, SpriteBatch batch, Font hudFont) {
+		if (this.helpTextWidth == 0.0f) {
+			this.helpTextWidth = hudFont.getRenderWidth(HELP_TEXT);
+		}
+		hudFont.draw(batch, HELP_TEXT, (Gdx.graphics.getWidth() / 2 - helpTextWidth / 2) + 1, (Gdx.graphics.getHeight() /2 - 200), Color.BLACK);
+		hudFont.draw(batch, HELP_TEXT, (Gdx.graphics.getWidth() / 2 - helpTextWidth / 2) - 1, (Gdx.graphics.getHeight() /2 - 200), Color.BLACK);
+		hudFont.draw(batch, HELP_TEXT, (Gdx.graphics.getWidth() / 2 - helpTextWidth / 2), (Gdx.graphics.getHeight() /2 - 200) + 1, Color.BLACK);
+		hudFont.draw(batch, HELP_TEXT, (Gdx.graphics.getWidth() / 2 - helpTextWidth / 2), (Gdx.graphics.getHeight() /2 - 200) - 1, Color.BLACK);
+
+		hudFont.draw(batch, HELP_TEXT, Gdx.graphics.getWidth() / 2 - helpTextWidth / 2, Gdx.graphics.getHeight() /2 - 200, Color.WHITE);
 	}
 
 	@Override
@@ -278,6 +309,10 @@ public class Player extends GameEntity {
 		String healthStr = ""+this.health;
 		hudFont.draw(batch, healthStr, 31, Gdx.graphics.getHeight() -25, Color.BLACK);
 		hudFont.draw(batch, healthStr, 30, Gdx.graphics.getHeight() -26, Color.WHITE);
+
+		if (this.timeToHideHelp > 0.0f) {
+			drawHelp(shapeRenderer, batch, hudFont);
+		}
 	}
 
 	public int getLevelFromXP(int xp) {
@@ -523,6 +558,8 @@ public class Player extends GameEntity {
 			float y = prefs.getFloat("Y");
 			this.setPosition(new Vector2(x, y));
 		}
+		// If game was loaded player definitely read help
+		this.timeToHideHelp = 0.0f;
 	}
 
 	public void save(Preferences prefs) {
