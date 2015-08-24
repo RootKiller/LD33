@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 public class Font {
 	public static final String POLISH_CHARACTERS = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŻŹ"
 		+ "aąbcćdeęfghijklłmnńoópqrsśtuvwxyzżź"
-		+ "1234567890.,:;_¡!?\"'+-*/()[]={}";
+		+ "1234567890.,:;_¡!?\"'+-*/()[]={}&";
 
 	private BitmapFont font;
 
