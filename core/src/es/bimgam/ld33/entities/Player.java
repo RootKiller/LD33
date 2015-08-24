@@ -125,6 +125,9 @@ public class Player extends GameEntity {
 	public void dispose() {
 		super.dispose();
 
+		assetManager.unload(SPRITE_FILE);
+		assetManager.unload(HEALTH_ICON_FILE);
+
 		this.shootSound.dispose();
 		this.hitSound.dispose();
 		this.deadSound.dispose();
