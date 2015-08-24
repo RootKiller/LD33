@@ -98,7 +98,7 @@ public class Soldier extends Enemy {
 	}
 
 	private void fire(Vector2 target) {
-		String name = "EnemyBullet" + (bulletCounter + (int)(Math.random() * 200));
+		String name = "EnemyBullet" + bulletCounter;
 		Bullet bullet = this.scene.createEntity(name, EnemyBullet.class);
 		bulletCounter++;
 
