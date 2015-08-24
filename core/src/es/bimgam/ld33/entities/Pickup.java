@@ -14,7 +14,7 @@ import es.bimgam.ld33.core.Debug;
 public class Pickup extends GameEntity {
 
 	public enum PickupKind {
-		UNSET, HEALTH, FREEZER
+		UNSET, HEALTH, FREEZER, BOOST
 	}
 
 	private AssetManager assetManager;
@@ -127,6 +127,14 @@ public class Pickup extends GameEntity {
 			return "entities/sprites/PICKUP/heart.png";
 		case FREEZER:
 			return "entities/sprites/BULLET/freezingBullet.png";
+		case BOOST: {
+			Boost boost = (Boost) this.value;
+			switch (boost) {
+			case TRIPLE_BULLETS:
+				return "interface/boosts/SHOT_TRIPLE.png";
+			}
+			return "interface/boosts/SHIELD.png";
+		}
 		}
 		return "entities/sprites/PICKUP/heart.png";
 	}

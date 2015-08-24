@@ -23,6 +23,7 @@ import es.bimgam.ld33.states.StateManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Player extends GameEntity {
 
@@ -79,6 +80,11 @@ public class Player extends GameEntity {
 	private int health;
 
 	private float levelUpLabel;
+
+	private Stack<Boost> boosts = new Stack<Boost>();
+
+	private Boost activeBoost = null;
+	private float timeToChangeBoost = 0.0f;
 
 	public Player(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
@@ -196,6 +202,8 @@ public class Player extends GameEntity {
 
 	@Override
 	public void tick(float deltaTime) {
+		updateBoosts(deltaTime);
+
 		if (this.sprite != null && this.physicalBody != null) {
 			Vector2 pos = this.physicalBody.getPosition();
 			this.sprite.setPosition(pos.x - centerPoint.x, pos.y - centerPoint.y);
@@ -206,7 +214,6 @@ public class Player extends GameEntity {
 		if (this.physicalBody != null) {
 			final float alpha = MathUtils.clamp(100.0f * deltaTime, 0.0f, 1.0f);
 			velocity.lerp(Vector2.Zero, alpha);
-			// velocity.interpolate(Vector2.Zero, alpha, Interpolation.sine);
 		}
 
 		this.shootCooldown -= deltaTime;
@@ -248,12 +255,17 @@ public class Player extends GameEntity {
 		} catch(Exception e) {
 		}
 		hudFont.draw(batch, "XP: " + xp + " Level: " + level, 10, 50, Color.BLACK);
+		float y = 90;
+		if (this.activeBoost != null) {
+			hudFont.draw(batch, "Boost: " + this.activeBoost.name() + " - " + ((Integer)((int)this.timeToChangeBoost)).toString() + "s", 10, y, Color.BLACK);
+			y += 50.0f;
+		}
 
 		if (shootCooldown > 0.0f) {
 			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 90, 100, 20);
+			shapeRenderer.rect(10, Gdx.graphics.getHeight() - y, 100, 20);
 			shapeRenderer.setColor(Color.WHITE);
-			shapeRenderer.rect(10, Gdx.graphics.getHeight() - 90, 100 * (shootCooldown / SHOOTING_COOLDOWN), 20);
+			shapeRenderer.rect(10, Gdx.graphics.getHeight() - y, 100 * (shootCooldown / SHOOTING_COOLDOWN), 20);
 		}
 
 		if (this.healthTexture != null) {
@@ -299,8 +311,34 @@ public class Player extends GameEntity {
 		vel.x *= 100.0f;
 		vel.y *= 100.0f;
 		bullet.physicalBody.setLinearVelocity(vel);
-
 		this.shootSound.play();
+
+		if (this.activeBoost == Boost.TRIPLE_BULLETS) {
+			bullet = this.scene.createEntity("Bullet" + bulletCounter, weaponInfo.bullet);
+			bulletCounter++;
+
+			bullet.physicalBody.setTransform(myPos.x, myPos.y, 0.0f);
+			world2 = new Vector2(world.x, world.y);
+			vel = world2.sub(myPos.x, myPos.y).nor();
+			vel.rotate(-10.0f);
+			vel.x *= 100.0f;
+			vel.y *= 100.0f;
+			bullet.physicalBody.setLinearVelocity(vel);
+			this.shootSound.play();
+
+			bullet = this.scene.createEntity("Bullet" + bulletCounter, weaponInfo.bullet);
+			bulletCounter++;
+
+			bullet.physicalBody.setTransform(myPos.x, myPos.y, 0.0f);
+			world2 = new Vector2(world.x, world.y);
+			vel = world2.sub(myPos.x, myPos.y).nor();
+			vel.rotate(10.0f);
+			vel.x *= 100.0f;
+			vel.y *= 100.0f;
+			bullet.physicalBody.setLinearVelocity(vel);
+			this.shootSound.play();
+		}
+
 		shootCooldown = SHOOTING_COOLDOWN - (SHOOTING_BONUS_FOR_KILLS * (this.killedCivs + this.killedSoldiers));
 
 		if (weaponInfo.ammo != -1) {
@@ -345,6 +383,8 @@ public class Player extends GameEntity {
 			case FREEZER:
 				this.addWeapon(FreezingBullet.class, (Integer) pickup.getValue());
 				break;
+			case BOOST:
+				this.activateBoost((Boost) pickup.getValue());
 				break;
 			}
 			this.scene.destroyEntity(pickup);
@@ -399,5 +439,24 @@ public class Player extends GameEntity {
 
 	public void addHealth(int hp) {
 		this.health += hp;
+	}
+
+	private void activateBoost(Boost boost) {
+		if (this.boosts.isEmpty() && (this.activeBoost == null)) {
+			this.activeBoost = boost;
+			this.timeToChangeBoost = this.activeBoost.time;
+			return;
+		}
+		this.boosts.push(boost);
+	}
+
+	private void updateBoosts(float deltaTime) {
+		this.timeToChangeBoost -= deltaTime;
+		if ((this.timeToChangeBoost <= 0.0f) && (this.activeBoost != null)) {
+			this.activeBoost = (this.boosts.isEmpty() ? null : this.boosts.pop());
+			if (this.activeBoost != null) {
+				this.timeToChangeBoost = this.activeBoost.time;
+			}
+		}
 	}
 }
