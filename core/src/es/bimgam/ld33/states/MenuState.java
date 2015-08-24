@@ -25,11 +25,13 @@ public class MenuState extends State {
 	private AssetManager assetsManager = null;
 
 	private Texture logo = null;
+	private Texture gameLogo = null;
 	private Font font1 = null;
 
 	private SpriteBatch batch = null;
 
 	private static final String HORNY_PEPPERS_LOGO = "interface/horny_peppers_logo.png";
+	private static final String GAME_LOGO = "interface/game_logo.png";
 
 	public MenuState(StateManager stateManager, Stage stage, Skin skin) {
 		super(stateManager, stage, skin);
@@ -47,6 +49,7 @@ public class MenuState extends State {
 	@Override
 	public void activate() {
 		this.assetsManager.load(HORNY_PEPPERS_LOGO, Texture.class);
+		this.assetsManager.load(GAME_LOGO, Texture.class);
 		this.graphics = Gdx.graphics;
 		this.font1 = new Font("fonts/arial.ttf", 20);
 
@@ -55,7 +58,7 @@ public class MenuState extends State {
 		if (this.savePref.contains("IsGameSaved")) {
 			TextButton continueGame = new TextButton("Continue game", this.skin);
 			continueGame.setSize(300, 50);
-			continueGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 + 80.0f);
+			continueGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 - 20.0f);
 			this.stage.addActor(continueGame);
 
 			continueGame.addListener(new ClickListener() {
@@ -69,7 +72,7 @@ public class MenuState extends State {
 
 		TextButton newGame = new TextButton("New game", this.skin);
 		newGame.setSize(300, 50);
-		newGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 + 10.0f);
+		newGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 - 90.0f);
 		this.stage.addActor(newGame);
 
 		newGame.addListener(new ClickListener() {
@@ -81,7 +84,7 @@ public class MenuState extends State {
 
 		TextButton quitGame = new TextButton("Quit game", this.skin);
 		quitGame.setSize(300, 50);
-		quitGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 - 60.0f);
+		quitGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 - 160.0f);
 		this.stage.addActor(quitGame);
 
 		quitGame.addListener(new ClickListener() {
@@ -93,7 +96,7 @@ public class MenuState extends State {
 		if (Debug.TEST_UI_MENU) {
 			TextButton test = new TextButton("Test", this.skin);
 			test.setSize(300, 50);
-			test.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 - 130.0f);
+			test.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 - 230.0f);
 			this.stage.addActor(test);
 
 			test.addListener(new ClickListener() {
@@ -117,6 +120,9 @@ public class MenuState extends State {
 		this.assetsManager.unload(HORNY_PEPPERS_LOGO);
 		this.logo = null;
 
+		this.assetsManager.unload(GAME_LOGO);
+		this.gameLogo = null;
+
 		this.batch.dispose();
 		this.batch = null;
 
@@ -132,13 +138,18 @@ public class MenuState extends State {
 			this.logo = this.assetsManager.get(HORNY_PEPPERS_LOGO);
 		}
 
+		if (this.gameLogo == null && this.assetsManager.isLoaded(GAME_LOGO)) {
+			this.gameLogo = this.assetsManager.get(GAME_LOGO);
+		}
+
 		this.batch.begin();
 		if (this.logo != null) {
-			float size = this.logo.getHeight();
-			if (this.logo.getHeight() > this.graphics.getHeight()) {
-				size = this.graphics.getHeight();
-			}
-			this.batch.draw(logo, this.graphics.getWidth() / 2 - size / 2, 0, size, size);
+			final float LOGO_SIZE = 128.0f;
+			this.batch.draw(logo, this.graphics.getWidth() - LOGO_SIZE - 5, 5, LOGO_SIZE, LOGO_SIZE);
+		}
+
+		if (this.gameLogo != null) {
+			this.batch.draw(gameLogo, this.graphics.getWidth() / 2 - (this.gameLogo.getWidth() / 2), this.graphics.getHeight() / 2 + 50.0f);
 		}
 
 		this.font1.draw(this.batch, "FPS: " + this.graphics.getFramesPerSecond(), 2, 2);
