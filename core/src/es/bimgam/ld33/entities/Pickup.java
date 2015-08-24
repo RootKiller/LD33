@@ -25,11 +25,14 @@ public class Pickup extends GameEntity {
 
 	private String textureName;
 
+	private float lifeTime;
+
 	public Pickup(Scene scene, World physicalWorld, AssetManager assetManager) {
 		super(scene, physicalWorld, assetManager);
 
 		this.kind = PickupKind.UNSET;
 		this.value = 0;
+		this.lifeTime = 30.0f;
 	}
 
 	@Override
@@ -71,6 +74,11 @@ public class Pickup extends GameEntity {
 		if (this.sprite != null) {
 			Vector2 pos = this.physicalBody.getPosition();
 			this.sprite.setPosition(pos.x - centerPoint.x, pos.y - centerPoint.y);
+		}
+
+		this.lifeTime -= deltaTime;
+		if (this.lifeTime <= 0.0f) {
+			this.scene.destroyEntity(this);
 		}
 	}
 
