@@ -346,7 +346,7 @@ public class Player extends GameEntity {
 				this.addWeapon(FreezingBullet.class, pickup.getValue());
 				break;
 			}
-			pickup.onPickup(this);
+			this.scene.destroyEntity(pickup);
 			this.pickupSound.play();
 		}
 	}

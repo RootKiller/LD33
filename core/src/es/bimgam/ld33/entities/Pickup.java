@@ -113,10 +113,6 @@ public class Pickup extends GameEntity {
 		this.value = value;
 	}
 
-	public void onPickup(GameEntity entity) {
-		this.scene.destroyEntity(this);
-	}
-
 	private String textureFromKind(PickupKind kind) {
 		switch (kind) {
 		case HEALTH:
