@@ -2,6 +2,7 @@ package es.bimgam.ld33.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -36,6 +37,8 @@ public class MenuState extends State {
 		this.assetsManager = LD33.Instance.getAssetsManager();
 	}
 
+	private Preferences savePref = Gdx.app.getPreferences("LD33.Game.Save");
+
 	@Override
 	public String getName() {
 		return "MenuState";
@@ -48,6 +51,21 @@ public class MenuState extends State {
 		this.font1 = new Font("fonts/arial.ttf", 20);
 
 		this.batch = new SpriteBatch();
+
+		if (this.savePref.contains("IsGameSaved")) {
+			TextButton continueGame = new TextButton("Continue game", this.skin);
+			continueGame.setSize(300, 50);
+			continueGame.setPosition(this.graphics.getWidth() / 2 - 150, this.graphics.getHeight() / 2 + 80.0f);
+			this.stage.addActor(continueGame);
+
+			continueGame.addListener(new ClickListener() {
+				public void clicked(InputEvent event, float x, float y) {
+					HashMap<String, Object> params = new HashMap<String, Object>();
+					params.put("LoadGame", true);
+					StateManager.Instance.setActiveState("InGameState", params);
+				}
+			});
+		}
 
 		TextButton newGame = new TextButton("New game", this.skin);
 		newGame.setSize(300, 50);

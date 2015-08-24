@@ -2,6 +2,7 @@ package es.bimgam.ld33.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -452,11 +453,108 @@ public class Player extends GameEntity {
 
 	private void updateBoosts(float deltaTime) {
 		this.timeToChangeBoost -= deltaTime;
-		if ((this.timeToChangeBoost <= 0.0f) && (this.activeBoost != null)) {
+		if (this.timeToChangeBoost <= 0.0f) {
 			this.activeBoost = (this.boosts.isEmpty() ? null : this.boosts.pop());
 			if (this.activeBoost != null) {
 				this.timeToChangeBoost = this.activeBoost.time;
 			}
 		}
+	}
+
+	public void load(Preferences prefs) {
+		Debug.Assert(prefs.contains("IsGameSaved"), "Game was not saved!");
+		this.xp = prefs.getInteger("XP", this.xp);
+		this.level = prefs.getInteger("Level", this.level);
+		this.health = prefs.getInteger("Health", this.health);
+		this.killedCivs = prefs.getInteger("KilledCivs", this.killedCivs);
+		this.killedSoldiers = prefs.getInteger("KilledSoldiers", this.killedSoldiers);
+		this.hitsCount = prefs.getInteger("HitsCount", this.hitsCount);
+		String weapons = prefs.getString("Weapons", "");
+		if (! weapons.isEmpty()) {
+			String[] weaponInfoSerialized = weapons.split(",");
+			for (String wInfo : weaponInfoSerialized) {
+				String[] wInfoSplited = wInfo.split("\\|");
+				Debug.Assert(wInfoSplited.length == 2, "Invalid count of the parameters in serialized weapon buffer.");
+				try {
+					Class bulletClassRaw = Class.forName(wInfoSplited[0]);
+					if (bulletClassRaw != Bullet.class && bulletClassRaw.getSuperclass() != Bullet.class) {
+						throw new Exception("Incorrect bullet class name!");
+					}
+
+					Integer ammo = Integer.parseInt(wInfoSplited[1]);
+					this.addWeapon(bulletClassRaw, ammo);
+				} catch(Exception e) {
+					Debug.Log("Cannot deserialize weapons! (" + e.getMessage() + ")");
+					e.printStackTrace();
+					System.exit(2101997);
+				}
+			}
+		}
+
+		String activeBoostSerialized = prefs.getString("ActiveBoost", "");
+		if (! activeBoostSerialized.isEmpty()) {
+			String[] activeBoostSplited = activeBoostSerialized.split("\\|");
+
+			Debug.Assert(activeBoostSplited.length == 2, "Incorrect active boost format (" + activeBoostSerialized + ", "+ activeBoostSplited.length +")");
+			this.activeBoost = Boost.valueOf(activeBoostSplited[0]);
+			if (this.activeBoost != null) {
+				this.timeToChangeBoost = Float.parseFloat(activeBoostSplited[1]);
+			}
+		}
+
+		String[] boostQueue = prefs.getString("BoostQueue", "").split(",");
+		for (String boostName : boostQueue) {
+			Boost _boost = null;
+			try {
+				_boost = Boost.valueOf(boostName);
+			} catch(Exception e) {}
+			if (_boost != null) {
+				this.activateBoost(_boost);
+			}
+		}
+
+		if (prefs.contains("X") && prefs.contains("Y")) {
+			float x = prefs.getFloat("X");
+			float y = prefs.getFloat("Y");
+			this.setPosition(new Vector2(x, y));
+		}
+	}
+
+	public void save(Preferences prefs) {
+		prefs.putInteger("XP", this.xp);
+		prefs.putInteger("Level", this.level);
+		prefs.putInteger("Health", this.health);
+		prefs.putInteger("KilledCivs", this.killedCivs);
+		prefs.putInteger("KilledSoldiers", this.killedSoldiers);
+		prefs.putInteger("HitsCount", this.hitsCount);
+		String weapons = "";
+		for (WeaponInfo weaponInfo : this.weapons) {
+			if (weaponInfo.bullet != Bullet.class) {
+				weapons += weaponInfo.bullet.getName() + "|" + weaponInfo.ammo + ",";
+			}
+		}
+		if (! weapons.isEmpty()) {
+			weapons = weapons.substring(0, weapons.length() - 1);
+			prefs.putString("Weapons", weapons);
+		}
+
+		if (this.activeBoost != null) {
+			String activeBoostStringized = this.activeBoost.name() + "|" + this.timeToChangeBoost;
+			prefs.putString("ActiveBoost", activeBoostStringized);
+		}
+
+		String boostQueue = "";
+		for (Boost boost : this.boosts) {
+			boostQueue += boost.name()+",";
+		}
+		if (! boostQueue.isEmpty()) {
+			boostQueue = boostQueue.substring(0, boostQueue.length() - 1);
+			prefs.putString("BoostQueue", boostQueue);
+		}
+
+		prefs.putString("Weapons", weapons);
+		Vector2 pos = this.getPosition();
+		prefs.putFloat("X", pos.x);
+		prefs.putFloat("Y", pos.y);
 	}
 }

@@ -3,6 +3,7 @@ package es.bimgam.ld33.states;
 import com.badlogic.gdx.Gdx;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -45,6 +46,8 @@ public class InGameState extends State {
 
 	private static final int ENEMIES_UPPER_LIMIT = 1000;
 
+	private Preferences savePref = Gdx.app.getPreferences("LD33.Game.Save");
+
 	public InGameState(StateManager stateManager, Stage stage, Skin skin) {
 		super(stateManager, stage, skin);
 	}
@@ -71,10 +74,41 @@ public class InGameState extends State {
 
 		this.player = this.scene.createEntity("Player", Player.class);
 
+		if (this.params != null && this.params.containsKey("LoadGame") && this.savePref.contains("IsGameSaved")) {
+			this.player.load(this.savePref);
+		}
+
 		for (int i = 0; i < 400; ++i) {
 			createEnemy(false);
 		}
 		timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
+
+		TextButton saveAndQuit = new TextButton("Save & Quit", this.skin);
+		saveAndQuit.setPosition(Gdx.graphics.getWidth() - 160, Gdx.graphics.getHeight() - 40);
+		saveAndQuit.setSize(150, 30);
+		saveAndQuit.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				StateManager.Instance.getActiveStateSafe(InGameState.class).quitAndSave();
+			}
+		});
+		this.stage.addActor(saveAndQuit);
+	}
+
+	@Override
+	public void deactivate() {
+		this.shapeRenderer.dispose();
+		this.shapeRenderer = null;
+		this.player = null;
+		this.orthoCamera = null;
+		this.spriteBatch = null;
+		this.scene.dispose();
+		this.scene = null;
+		this.hudFont.dispose();
+		this.hudFont = null;
+		this.hudSpriteBatch.dispose();
+		this.hudSpriteBatch = null;
+		this.stage.clear();
 	}
 
 	private void showDevMenu() {
@@ -109,15 +143,15 @@ public class InGameState extends State {
 
 		Pickup pickup = this.scene.createEntity("Pickup" + freeIndex, Pickup.class);
 		final float probabilityRandom = (float) Math.random();
-		if (probabilityRandom >= 0.0f && probabilityRandom <= 0.3f) { // 30% (0-30)
-			pickup.setup(Pickup.PickupKind.BOOST, Boost.TRIPLE_BULLETS);
-		}
-		else if (probabilityRandom > 0.3f && probabilityRandom <= 0.5f) { // 20% (30-50)
+		//if (probabilityRandom >= 0.0f && probabilityRandom <= 0.3f) { // 30% (0-30)
+		//	pickup.setup(Pickup.PickupKind.BOOST, Boost.TRIPLE_BULLETS);
+		//}
+		//else if (probabilityRandom > 0.3f && probabilityRandom <= 0.5f) { // 20% (30-50)
 			pickup.setup(Pickup.PickupKind.FREEZER, 5);
-		}
-		else { // 50% (50-100)
-			pickup.setup(Pickup.PickupKind.HEALTH, 1);
-		}
+		//}
+		//else { // 50% (50-100)
+		//	pickup.setup(Pickup.PickupKind.HEALTH, 1);
+		//}
 		Vector2 playerPos = this.player.getPosition();
 		pickup.setPosition(new Vector2(playerPos.x + -500.0f + (float) Math.random() * 1000.0f, playerPos.y + -500.0f + (float) Math.random() * 1000.0f));
 	}
@@ -126,22 +160,6 @@ public class InGameState extends State {
 		Class<? extends Enemy> enemyClass = soldier ? Soldier.class : Enemy.class;
 		this.scene.createEntity("Enemy " + this.enemyCounter, enemyClass);
 		this.enemyCounter ++;
-	}
-
-	@Override
-	public void deactivate() {
-		this.shapeRenderer.dispose();
-		this.shapeRenderer = null;
-		this.player = null;
-		this.orthoCamera = null;
-		this.spriteBatch = null;
-		this.scene.dispose();
-		this.scene = null;
-		this.hudFont.dispose();
-		this.hudFont = null;
-		this.hudSpriteBatch.dispose();
-		this.hudSpriteBatch = null;
-		this.stage.clear();
 	}
 
 	@Override
@@ -273,10 +291,23 @@ public class InGameState extends State {
 	}
 
 	public void gameOver(int killedEntities, int xp, int level) {
+		this.savePref.clear();
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put("KilledEnemies", killedEntities);
 		params.put("XP", xp);
 		params.put("Level", level);
 		this.manager.setActiveState("GameOverState", params);
+	}
+
+	private void quitAndSave() {
+		this.save();
+		this.manager.setActiveState("MenuState");
+	}
+
+	public void save() {
+		this.savePref.clear();
+		this.savePref.putBoolean("IsGameSaved", true);
+		this.player.save(this.savePref);
+		this.savePref.flush();
 	}
 }
