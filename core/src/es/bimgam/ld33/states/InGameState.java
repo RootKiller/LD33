@@ -145,15 +145,26 @@ public class InGameState extends State {
 
 		Pickup pickup = this.scene.createEntity("Pickup" + freeIndex, Pickup.class);
 		final float probabilityRandom = (float) Math.random();
-		//if (probabilityRandom >= 0.0f && probabilityRandom <= 0.3f) { // 30% (0-30)
-		//	pickup.setup(Pickup.PickupKind.BOOST, Boost.TRIPLE_BULLETS);
-		//}
-		//else if (probabilityRandom > 0.3f && probabilityRandom <= 0.5f) { // 20% (30-50)
-			pickup.setup(Pickup.PickupKind.FREEZER, 5);
-		//}
-		//else { // 50% (50-100)
-		//	pickup.setup(Pickup.PickupKind.HEALTH, 1);
-		//}
+		Pickup.PickupKind kind;
+		Object value = null;
+		if (probabilityRandom >= 0.0f && probabilityRandom <= 0.3f) { // 30% (0-30)
+			Boost boostKind = Boost.TRIPLE_BULLETS;
+			if (Math.random() > 0.5f) {
+				boostKind = Boost.SHIELD;
+			}
+			kind = Pickup.PickupKind.BOOST;
+			value = boostKind;
+		}
+		else if (probabilityRandom > 0.3f && probabilityRandom <= 0.5f) { // 20% (30-50)
+			kind = Pickup.PickupKind.FREEZER;
+			value = 5;
+		}
+		else { // 50% (50-100)
+			kind = Pickup.PickupKind.HEALTH;
+			value = 1;
+		}
+		pickup.setup(kind, value);
+
 		Vector2 playerPos = this.player.getPosition();
 		pickup.setPosition(new Vector2(playerPos.x + -500.0f + (float) Math.random() * 1000.0f, playerPos.y + -500.0f + (float) Math.random() * 1000.0f));
 	}
