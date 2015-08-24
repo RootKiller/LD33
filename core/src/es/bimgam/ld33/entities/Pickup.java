@@ -96,9 +96,9 @@ public class Pickup extends GameEntity {
 			Texture texture = this.assetManager.get(this.textureName, Texture.class);
 			this.sprite = new Sprite(texture);
 			this.sprite.setPosition(0, 0);
-			this.sprite.setSize(texture.getWidth(), texture.getHeight());
-			centerPoint.x = texture.getWidth() / 2;
-			centerPoint.y = texture.getHeight() / 2;
+			this.sprite.setSize(16.0f, 16.0f);
+			centerPoint.x = 8.0f;
+			centerPoint.y = 8.0f;
 		}
 	}
 
@@ -132,6 +132,8 @@ public class Pickup extends GameEntity {
 			switch (boost) {
 			case TRIPLE_BULLETS:
 				return "interface/boosts/SHOT_TRIPLE.png";
+			case SHIELD:
+				return "interface/boosts/SHIELD.png";
 			}
 			return "interface/boosts/SHIELD.png";
 		}

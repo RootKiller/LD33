@@ -367,13 +367,15 @@ public class Player extends GameEntity {
 	@Override
 	public void onCollisionEnter(GameEntity entity) {
 		if (entity.getTypeName() == "Bullet") {
-			this.health -= ((Bullet) entity).getDamage();
-			if (this.health <= 0) {
-				this.deadSound.play();
-				StateManager.Instance.getActiveStateSafe(InGameState.class).gameOver(this.killedCivs + this.killedSoldiers, this.xp, this.level);
-			}
-			else {
-				this.hitSound.play();
+			if (this.activeBoost != Boost.SHIELD) {
+				this.health -= ((Bullet) entity).getDamage();
+				if (this.health <= 0) {
+					this.deadSound.play();
+					StateManager.Instance.getActiveStateSafe(InGameState.class).gameOver(this.killedCivs + this.killedSoldiers, this.xp, this.level);
+				}
+				else {
+					this.hitSound.play();
+				}
 			}
 			this.scene.destroyEntity(entity);
 		}
