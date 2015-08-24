@@ -95,16 +95,27 @@ public class InGameState extends State {
 	}
 
 	private void spawnPickup() {
-		if (! this.scene.doesEntityExists("Pickup")) {
-			Pickup pickup = this.scene.createEntity("Pickup", Pickup.class);
-			if (Math.random() > 0.5f) {
-				pickup.setup(Pickup.PickupKind.FREEZER, 5);
+		int freeIndex = -1;
+		for (int i = 0; i < 5; ++i) {
+			if (! this.scene.doesEntityExists("Pickup" + i)) {
+				freeIndex = i;
+				break;
 			}
-			else {
-				pickup.setup(Pickup.PickupKind.HEALTH, 1);
-			}
-			pickup.setPosition(new Vector2(-200.0f + (float) Math.random() * 200.0f, -200.0f + (float) Math.random() * 200.0f));
 		}
+
+		if (freeIndex == -1) {
+			return;
+		}
+
+		Pickup pickup = this.scene.createEntity("Pickup" + freeIndex, Pickup.class);
+		if (Math.random() > 0.5f) {
+			pickup.setup(Pickup.PickupKind.FREEZER, 5);
+		}
+		else {
+			pickup.setup(Pickup.PickupKind.HEALTH, 1);
+		}
+		Vector2 playerPos = this.player.getPosition();
+		pickup.setPosition(new Vector2(playerPos.x + -500.0f + (float) Math.random() * 1000.0f, playerPos.y + -500.0f + (float) Math.random() * 1000.0f));
 	}
 
 	private void createEnemy(boolean soldier) {
@@ -236,7 +247,7 @@ public class InGameState extends State {
 		timeToSpawnNewPickup -= deltaTime;
 		if (timeToSpawnNewPickup <= 0.0f) {
 			spawnPickup();
-			timeToSpawnNewPickup = 10.0f + (float)Math.random() * 50.0f;
+			timeToSpawnNewPickup = (float)Math.random() * 20.0f;
 		}
 
 		timeToSpawnNewEntities -= deltaTime;
