@@ -21,7 +21,7 @@ public class Pickup extends GameEntity {
 	private Vector2 centerPoint = new Vector2();
 
 	private PickupKind kind;
-	private int value;
+	private Object value;
 
 	private String textureName;
 
@@ -106,19 +106,19 @@ public class Pickup extends GameEntity {
 		return this.kind;
 	}
 
-	public int getValue() {
+	public Object getValue() {
 		return this.value;
 	}
 
-	public void setup(PickupKind kind, int value) {
+	public void setup(PickupKind kind, Object value) {
 		Debug.Assert(this.kind == PickupKind.UNSET, "Kind is not unset!");
 		if (this.kind != PickupKind.UNSET) {
 			return;
 		}
-		this.textureName = textureFromKind(kind);
-		assetManager.load(this.textureName, Texture.class);
 		this.kind = kind;
 		this.value = value;
+		this.textureName = textureFromKind(kind);
+		assetManager.load(this.textureName, Texture.class);
 	}
 
 	private String textureFromKind(PickupKind kind) {

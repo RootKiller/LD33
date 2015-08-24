@@ -340,10 +340,11 @@ public class Player extends GameEntity {
 			Pickup pickup = (Pickup) entity;
 			switch (pickup.getKind()) {
 			case HEALTH:
-				this.health += pickup.getValue();
+				this.health += (Integer) pickup.getValue();
 				break;
 			case FREEZER:
-				this.addWeapon(FreezingBullet.class, pickup.getValue());
+				this.addWeapon(FreezingBullet.class, (Integer) pickup.getValue());
+				break;
 				break;
 			}
 			this.scene.destroyEntity(pickup);
