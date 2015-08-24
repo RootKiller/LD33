@@ -66,7 +66,7 @@ public class LD33 extends ApplicationAdapter {
 		this.commandManager.register(new QuitCommand());
 
 		new Bind(Input.Keys.ESCAPE, true, "quit");
-		new Bind(Input.Keys.ENTER, true, new Runnable() {
+		/*new Bind(Input.Keys.ENTER, true, new Runnable() {
 			@Override
 			public void run() {
 			if (Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)) {
@@ -78,7 +78,7 @@ public class LD33 extends ApplicationAdapter {
 				}
 			}
 		}
-		});
+		});*/
 	}
 
 	@Override
