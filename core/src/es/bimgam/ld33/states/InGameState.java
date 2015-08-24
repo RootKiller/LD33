@@ -304,7 +304,7 @@ public class InGameState extends State {
 	}
 
 	public void gameOver(int killedEntities, int xp, int level) {
-		this.savePref.clear();
+		this.savePref.remove("IsGameSaved");
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put("KilledEnemies", killedEntities);
 		params.put("XP", xp);
@@ -318,7 +318,6 @@ public class InGameState extends State {
 	}
 
 	public void save() {
-		this.savePref.clear();
 		this.savePref.putBoolean("IsGameSaved", true);
 		this.player.save(this.savePref);
 		this.savePref.flush();

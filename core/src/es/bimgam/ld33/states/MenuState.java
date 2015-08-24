@@ -9,9 +9,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import es.bimgam.ld33.LD33;
 import es.bimgam.ld33.core.Debug;
 import es.bimgam.ld33.graphics.Font;
@@ -26,7 +28,6 @@ public class MenuState extends State {
 
 	private Texture logo = null;
 	private Texture gameLogo = null;
-	private Font font1 = null;
 
 	private SpriteBatch batch = null;
 
@@ -51,9 +52,15 @@ public class MenuState extends State {
 		this.assetsManager.load(HORNY_PEPPERS_LOGO, Texture.class);
 		this.assetsManager.load(GAME_LOGO, Texture.class);
 		this.graphics = Gdx.graphics;
-		this.font1 = new Font("fonts/arial.ttf", 20);
 
 		this.batch = new SpriteBatch();
+
+
+		if (this.savePref.contains("HighScore")) {
+			Label highScore = new Label("High score: " + this.savePref.getInteger("HighScore"), this.skin);
+			highScore.setPosition(this.graphics.getWidth() / 2, this.graphics.getHeight() / 2 + 60.0f, Align.center);
+			this.stage.addActor(highScore);
+		}
 
 		if (this.savePref.contains("IsGameSaved")) {
 			TextButton continueGame = new TextButton("Continue game", this.skin);
@@ -77,10 +84,9 @@ public class MenuState extends State {
 
 		newGame.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				StateManager.Instance.setActiveState("InGameState");
+			StateManager.Instance.setActiveState("InGameState");
 			}
 		});
-
 
 		TextButton quitGame = new TextButton("Quit game", this.skin);
 		quitGame.setSize(300, 50);
@@ -101,12 +107,11 @@ public class MenuState extends State {
 
 			test.addListener(new ClickListener() {
 				public void clicked (InputEvent event, float x, float y) {
-
-					HashMap<String, Object> params = new HashMap<String, Object>();
-					params.put("KilledEnemies", 69);
-					params.put("XP", 6669);
-					params.put("Level", 616);
-					StateManager.Instance.setActiveState("GameOverState", params);
+				HashMap<String, Object> params = new HashMap<String, Object>();
+				params.put("KilledEnemies", 69);
+				params.put("XP", 6669);
+				params.put("Level", 616);
+				StateManager.Instance.setActiveState("GameOverState", params);
 				}
 			});
 		}
@@ -114,9 +119,6 @@ public class MenuState extends State {
 
 	@Override
 	public void deactivate() {
-		this.font1.dispose();
-		this.font1 = null;
-
 		this.assetsManager.unload(HORNY_PEPPERS_LOGO);
 		this.logo = null;
 
@@ -149,10 +151,9 @@ public class MenuState extends State {
 		}
 
 		if (this.gameLogo != null) {
-			this.batch.draw(gameLogo, this.graphics.getWidth() / 2 - (this.gameLogo.getWidth() / 2), this.graphics.getHeight() / 2 + 50.0f);
+			this.batch.draw(gameLogo, this.graphics.getWidth() / 2 - (this.gameLogo.getWidth() / 2), this.graphics.getHeight() / 2 + 80.0f);
 		}
 
-		this.font1.draw(this.batch, "FPS: " + this.graphics.getFramesPerSecond(), 2, 2);
 		this.batch.end();
 	}
 
