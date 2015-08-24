@@ -58,7 +58,7 @@ public class Pickup extends GameEntity {
 		fixtureDef.friction = 0.8f;
 		fixtureDef.restitution = 0.0f;
 		fixtureDef.filter.categoryBits = CollisionMasks.PICKUP;
-		fixtureDef.filter.maskBits = CollisionMasks.PLAYER;
+		fixtureDef.filter.maskBits = CollisionMasks.PLAYER | CollisionMasks.ENEMY;
 
 		this.physicalBody.createFixture(fixtureDef);
 		circleShape.dispose();
