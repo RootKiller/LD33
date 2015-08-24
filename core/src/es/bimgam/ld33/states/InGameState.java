@@ -108,7 +108,10 @@ public class InGameState extends State {
 		}
 
 		Pickup pickup = this.scene.createEntity("Pickup" + freeIndex, Pickup.class);
-		if (Math.random() > 0.5f) {
+		if (Math.random() > 0.7f) {
+			pickup.setup(Pickup.PickupKind.BOOST, Boost.TRIPLE_BULLETS);
+		}
+		else if (Math.random() > 0.5f) {
 			pickup.setup(Pickup.PickupKind.FREEZER, 5);
 		}
 		else {
@@ -261,7 +264,7 @@ public class InGameState extends State {
 
 				int soldiers = (int) (count * (0.05f + (this.player.getWantedLevel() * 0.05f)));
 				for (int i = 0; i < count; ++i) {
-					createEnemy((i <= soldiers));
+					createEnemy(i <= soldiers);
 				}
 			}
 			timeToSpawnNewEntities = 20.0f + (float)Math.random() * 10.0f;
