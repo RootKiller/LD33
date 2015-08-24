@@ -46,6 +46,8 @@ public class InGameState extends State {
 
 	private static final int ENEMIES_UPPER_LIMIT = 1000;
 
+	private static final int PICKUPS_UPPER_LIMIT = 10;
+
 	private Preferences savePref = Gdx.app.getPreferences("LD33.Game.Save");
 
 	public InGameState(StateManager stateManager, Stage stage, Skin skin) {
@@ -130,7 +132,7 @@ public class InGameState extends State {
 
 	private void spawnPickup() {
 		int freeIndex = -1;
-		for (int i = 0; i < 5; ++i) {
+		for (int i = 0; i < PICKUPS_UPPER_LIMIT; ++i) {
 			if (! this.scene.doesEntityExists("Pickup" + i)) {
 				freeIndex = i;
 				break;
@@ -269,7 +271,7 @@ public class InGameState extends State {
 		timeToSpawnNewPickup -= deltaTime;
 		if (timeToSpawnNewPickup <= 0.0f) {
 			spawnPickup();
-			timeToSpawnNewPickup = (float)Math.random() * 20.0f;
+			timeToSpawnNewPickup = (float)Math.random() * 10.0f;
 		}
 
 		timeToSpawnNewEntities -= deltaTime;
