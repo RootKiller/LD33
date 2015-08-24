@@ -108,6 +108,11 @@ public class Scene {
 			}
 		}
 		Debug.Assert(this.entitiesToRemove.isEmpty(), "Entities to remove is not empty");
+		if (! this.entitiesToRemove.isEmpty()) {
+			for (GameEntity entity : this.entitiesToRemove) {
+				Debug.Log(entity.getClass().getName());
+			}
+		}
 	}
 
 	private void processToCreate() {
